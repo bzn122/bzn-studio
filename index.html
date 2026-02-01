@@ -10,7 +10,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="icon" type="image/png" href="https://i.ibb.co/kgjTkMDX/Gemini-Generated-Image-ky6p34ky6p34ky6p-Photoroom.png">
     
-    <title>BZN12 Studio V108</title>
+    <title>BZN12 Studio V109 FINAL</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@600;800&family=Bebas+Neue&family=Chakra+Petch:wght@700&family=Do+Hyeon&family=Exo+2:wght@700&family=Fjalla+One&family=Kanit:wght@700&family=Oswald:wght@500;700&family=Passion+One:wght@700&family=Righteous&family=Roboto+Condensed:wght@300;400;700&family=Russo+One&family=Saira+Extra+Condensed:wght@700&family=Teko:wght@400;600&family=Titillium+Web:wght@700&family=Montserrat:wght@800&family=Playfair+Display:wght@700&family=Lobster&family=Orbitron:wght@700&family=Bangers&display=swap" rel="stylesheet">
     
@@ -19,7 +19,9 @@
     <style>
         :root { 
             --azul: #001E38; --oro: #F2C317; 
-            /* Variables usadas solo para la UI, no para el render */
+            /* Variables dinámicas para el glow físico */
+            --glow-opacity: 0.8;
+            --glow-blur: 8px;
         }
         html, body { margin: 0; padding: 0; font-family: 'Roboto Condensed', sans-serif; background: #001222; color: white; min-height: 100vh; padding-bottom: env(safe-area-inset-bottom); }
         ::-webkit-scrollbar { display: none; }
@@ -37,46 +39,34 @@
         .fondo-sombra { position: absolute; width: 100%; height: 100%; background: radial-gradient(circle at top right, transparent 40%, rgba(0,0,0,0.9) 100%); z-index: 2; }
         .overlay-dim { position: absolute; width: 100%; height: 100%; background: black; opacity: 0; z-index: 1; pointer-events: none; }
 
-        /* === SISTEMA DE CAPAS DEL JUGADOR (EL FIX REAL) === */
+        /* === SISTEMA DE CAPAS FÍSICAS === */
+        
+        /* Contenedor para mover al jugador y su brillo juntos */
         #player-wrapper {
-            position: absolute;
-            bottom: 0;
-            right: -50px; /* Posición base */
-            width: 300px; /* Ancho estimado para control */
-            height: 75%;
-            z-index: 3;
-            transform-origin: bottom center;
-            /* El movimiento se aplica a ESTE contenedor, no a las imágenes */
+            position: absolute; bottom: 0; right: -50px; width: 300px; height: 75%; z-index: 3;
+            transform-origin: bottom center; pointer-events: none;
         }
 
-        /* 1. CAPA GLOW (Física, duplicada detrás) */
+        /* 1. CAPA GLOW FÍSICA (Atrás) - Controlada por variables CSS */
         .player-glow {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            object-fit: contain;
-            /* Truco para volver la imagen dorada/amarilla y borrosa sin drop-shadow */
-            filter: sepia(100%) hue-rotate(5deg) saturate(1000%) blur(8px) brightness(1.2); 
-            opacity: 0; /* Se activa con JS */
-            transform: scale(1.06); /* Ligeramente más grande */
-            z-index: 1;
-            transition: opacity 0.3s;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; z-index: 1;
+            /* Filtro dorado fijo + Blur dinámico */
+            filter: sepia(100%) hue-rotate(5deg) saturate(1000%) brightness(1.2) blur(var(--glow-blur)); 
+            opacity: var(--glow-opacity); /* Opacidad dinámica */
+            transform: scale(1.05); /* Un poco más grande para que sobresalga */
+            transition: opacity 0.2s, filter 0.2s;
+            display: none; /* Se activa con JS */
         }
 
-        /* 2. CAPA PRINCIPAL (Imagen nítida) */
+        /* 2. CAPA PRINCIPAL FÍSICA (Adelante) */
         .player-main {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            object-fit: contain;
-            z-index: 2;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; z-index: 2;
         }
 
-        /* 3. CAPA FADE (Div físico sólido con degradado) */
-        .player-fade {
-            position: absolute;
-            bottom: 0; left: -50px; right: -50px; /* Un poco más ancho para cubrir bien */
-            height: 30%; /* Altura del degradado */
+        /* 3. CAPA FADE FÍSICA (Div sólido en la base del lienzo) */
+        .player-fade-layer {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 25%; z-index: 4;
             background: linear-gradient(to top, #000000 15%, transparent 100%);
-            z-index: 3;
             display: none; /* Se activa con JS */
             pointer-events: none;
         }
@@ -104,7 +94,6 @@
         .dt-label { color: var(--oro); font-weight: 700; margin-right: 10px; }
 
         .modo-noticia .bloque-header-11, .modo-noticia .lista-jugadores, .modo-noticia .dt-info { display: none; }
-        /* Ajuste de posición para modo noticia */
         .modo-noticia #player-wrapper { height: 85%; bottom: -30px; left: 50%; transform: translateX(-50%); right: auto; }
         
         .logo-noticia { position: absolute; top: 30px; left: 30px; width: 50px; height: 50px; border-radius: 50%; background: var(--azul); border: 2px solid var(--oro); display: flex; align-items: center; justify-content: center; z-index: 20; }
@@ -177,10 +166,8 @@
                     <div id="mov-logo-news" class="logo-noticia"><img src="https://i.ibb.co/kgjTkMDX/Gemini-Generated-Image-ky6p34ky6p34ky6p-Photoroom.png" crossorigin="anonymous"></div>
 
                     <div id="player-wrapper">
-                        <img src="" id="img-glow" class="player-glow" crossorigin="anonymous">
-                        <img src="" id="img-main" class="player-main" crossorigin="anonymous">
-                        <div id="fade-layer" class="player-fade"></div>
-                    </div>
+                        <img src="" id="img-glow" class="player-glow" crossorigin="anonymous"> <img src="" id="img-main" class="player-main" crossorigin="anonymous"> </div>
+                    <div id="fade-layer" class="player-fade-layer"></div>
 
                     <div id="mov-lista" class="lista-jugadores target-lista-jugadores"></div>
                     <div id="mov-dt" class="dt-info target-dt-info">
@@ -229,7 +216,7 @@
                     <hr style="border:0; border-top:1px solid rgba(255,255,255,0.1); margin:15px 0;">
                     <label>SELECCIONAR ELEMENTO</label>
                     <select id="sel-move-target" onchange="cargarPosicionElemento()" class="input-modern" style="margin-bottom:5px;">
-                        <option value="player-wrapper">👤 Jugador (Foto)</option> <optgroup label="Encabezado"><option value="mov-titulo-11">📝 Título</option><option value="mov-info-match">🆚 Info Partido</option><option value="mov-escudos">🛡️ Escudos</option><option value="mov-logo-11">🔵 Logo</option></optgroup>
+                        <option value="player-wrapper">👤 Jugador (Completo)</option> <optgroup label="Encabezado"><option value="mov-titulo-11">📝 Título</option><option value="mov-info-match">🆚 Info Partido</option><option value="mov-escudos">🛡️ Escudos</option><option value="mov-logo-11">🔵 Logo</option></optgroup>
                         <optgroup label="Datos"><option value="mov-lista">📋 Lista</option><option value="mov-dt">👔 DT</option><option value="mov-legal">👣 Footer</option></optgroup>
                         <optgroup label="Noticia"><option value="mov-bloque-noticia">📰 Textos</option><option value="mov-logo-news">🔵 Logo Noticia</option></optgroup>
                     </select>
@@ -252,14 +239,26 @@
                     <div class="upload-btn-wrapper"><button class="btn-ghost">📂 Subir Foto Propia</button><input type="file" id="file-jugador" accept="image/*" onchange="subirJugador()"></div>
 
                     <div class="glass-card-inner">
-                        <label style="color:#FFF; padding-bottom:5px; margin-bottom:10px;">✨ EFECTOS VISUALES</label>
-                        <label style="display:flex; align-items:center; gap:10px; cursor:pointer; color:#F2C317; margin-bottom:15px;">
-                            <input type="checkbox" id="chk-borde" onchange="toggleEfectosJugador()" style="width:18px; height:18px; accent-color:#F2C317;"> 
-                            ACTIVAR BORDE DORADO
-                        </label>
+                        <label style="color:#FFF; border-bottom:1px solid #444; padding-bottom:5px; margin-bottom:10px;">✨ EFECTOS VISUALES</label>
+                        <div style="margin-bottom:15px;">
+                            <label style="display:flex; align-items:center; gap:10px; cursor:pointer; color:#F2C317;">
+                                <input type="checkbox" id="chk-borde" onchange="toggleEfectosJugador()" style="width:18px; height:18px; accent-color:#F2C317;"> 
+                                ACTIVAR BORDE DORADO (FÍSICO)
+                            </label>
+                            <div id="controles-glow" style="display:none; background:rgba(0,0,0,0.3); padding:10px; border-radius:8px; margin-top:5px; border-left:3px solid #F2C317;">
+                                <div style="margin-bottom:5px;">
+                                    <label style="margin:0; font-size:10px;">INTENSIDAD (Opacidad)</label>
+                                    <input type="range" id="glow-opacity" min="0" max="1" step="0.1" value="0.8" oninput="ajustarGlowFisico()">
+                                </div>
+                                <div>
+                                    <label style="margin:0; font-size:10px;">GROSOR (Desenfoque)</label>
+                                    <input type="range" id="glow-blur" min="0" max="20" step="1" value="8" oninput="ajustarGlowFisico()">
+                                </div>
+                            </div>
+                        </div>
                         <label style="display:flex; align-items:center; gap:10px; cursor:pointer; color:#90caf9;">
                             <input type="checkbox" id="chk-fade" onchange="toggleEfectosJugador()" style="width:18px; height:18px; accent-color:#90caf9;" checked> 
-                            🌫️ DESVANECER PIES
+                            🌫️ DESVANECER PIES (FÍSICO)
                         </label>
                     </div>
                 </div>
@@ -414,9 +413,9 @@
         const selModo = document.getElementById('sel-modo');
         const selFondo = document.getElementById('sel-fondo');
         const selFoto = document.getElementById('sel-foto');
-        const imgMain = document.getElementById('img-main'); // CAMBIO DE ID
-        const imgGlow = document.getElementById('img-glow'); // NUEVO
-        const fadeLayer = document.getElementById('fade-layer'); // NUEVO
+        const imgMain = document.getElementById('img-main'); 
+        const imgGlow = document.getElementById('img-glow');
+        const fadeLayer = document.getElementById('fade-layer');
         const fileFondo = document.getElementById('file-fondo');
         const fileJugador = document.getElementById('file-jugador');
 
@@ -427,8 +426,11 @@
 
         const chkBorde = document.getElementById('chk-borde');
         const chkFade = document.getElementById('chk-fade');
-        
-        // FONDOS & TEXTOS
+        // SLIDERS RESTAURADOS PARA LA CAPA FÍSICA
+        const sliderGlowOpacity = document.getElementById('glow-opacity');
+        const sliderGlowBlur = document.getElementById('glow-blur');
+        const panelGlow = document.getElementById('controles-glow');
+
         const chkByn = document.getElementById('chk-byn');
         const rangeBlur = document.getElementById('range-blur');
         const rangeDim = document.getElementById('range-dim');
@@ -508,13 +510,26 @@
             txtBajada.style.color = document.getElementById('col-bajada').value;
         }
         
-        // --- 🔥 LÓGICA FÍSICA PARA EFECTOS ---
+        // --- LÓGICA FÍSICA PARA EFECTOS (Con Sliders Restaurados) ---
+        // Función para actualizar las variables CSS de la capa física
+        function ajustarGlowFisico() {
+            document.documentElement.style.setProperty('--glow-opacity', sliderGlowOpacity.value);
+            document.documentElement.style.setProperty('--glow-blur', sliderGlowBlur.value + 'px');
+        }
+
         function toggleEfectosJugador() {
-            // Glow: Mostramos la imagen de atrás
-            if (chkBorde.checked) { imgGlow.style.opacity = 1; } 
-            else { imgGlow.style.opacity = 0; }
+            // Glow: Mostramos la imagen de atrás y el panel de control
+            if (chkBorde.checked) { 
+                imgGlow.style.display = 'block';
+                panelGlow.style.display = 'block';
+                // Aseguramos que se apliquen los valores iniciales de los sliders
+                ajustarGlowFisico();
+            } else { 
+                imgGlow.style.display = 'none';
+                panelGlow.style.display = 'none';
+            }
             
-            // Fade: Mostramos el div negro encima
+            // Fade: Mostramos el div negro en la base
             if (chkFade.checked) { fadeLayer.style.display = 'block'; } 
             else { fadeLayer.style.display = 'none'; }
         }
@@ -538,7 +553,9 @@
                 if(document.querySelector('input[name="accion"]:checked').value !== 'lista') { 
                     imgMain.src = selFoto.value; 
                     imgGlow.src = selFoto.value; 
-                    document.getElementById('player-wrapper').style.display = 'block'; 
+                    // Activamos el wrapper y aplicamos el estado actual de los checkboxes
+                    document.getElementById('player-wrapper').style.pointerEvents = 'auto';
+                    toggleEfectosJugador();
                 } 
                 if(document.querySelector('input[name="accion"]:checked').value !== 'foto') { 
                     inLista.value += (inLista.value ? "\n" : "") + selFoto.options[selFoto.selectedIndex].text; actualizarLista(); 
@@ -551,7 +568,9 @@
                 const r = new FileReader(); 
                 r.onload = e => { 
                     imgMain.src = e.target.result; 
-                    imgGlow.src = e.target.result; 
+                    imgGlow.src = e.target.result;
+                    document.getElementById('player-wrapper').style.pointerEvents = 'auto';
+                    toggleEfectosJugador();
                 }; 
                 r.readAsDataURL(f); 
             } 
@@ -609,8 +628,8 @@
                     });
             })
             .catch(function (error) {
-                console.error('Error:', error);
-                alert('Hubo un error al generar la imagen. Intenta de nuevo.');
+                console.error('Error detallado:', error);
+                alert('Hubo un error al generar la imagen. Por favor revisa la consola para más detalles o intenta con otra imagen.');
             });
         }
 
