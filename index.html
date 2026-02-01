@@ -10,11 +10,11 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="icon" type="image/png" href="https://i.ibb.co/kgjTkMDX/Gemini-Generated-Image-ky6p34ky6p34ky6p-Photoroom.png">
     
-    <title>BZN12 Studio Final</title>
+    <title>BZN12 Studio V106</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@600;800&family=Bebas+Neue&family=Chakra+Petch:wght@700&family=Do+Hyeon&family=Exo+2:wght@700&family=Fjalla+One&family=Kanit:wght@700&family=Oswald:wght@500;700&family=Passion+One:wght@700&family=Righteous&family=Roboto+Condensed:wght@300;400;700&family=Russo+One&family=Saira+Extra+Condensed:wght@700&family=Teko:wght@400;600&family=Titillium+Web:wght@700&family=Montserrat:wght@800&family=Playfair+Display:wght@700&family=Lobster&family=Orbitron:wght@700&family=Bangers&display=swap" rel="stylesheet">
     
-    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js"></script>
 
     <style>
         :root { 
@@ -30,6 +30,8 @@
         .preview-section { padding: 20px; display: flex; justify-content: center; background: radial-gradient(circle, #1a3b5c 0%, #000 100%); }
         
         #banner-container { transform-origin: top center; box-shadow: 0 20px 50px rgba(0,0,0,0.6); transition: 0.3s; position: relative; }
+        
+        /* IMPORTANTE: El fondo debe ser transparente para que el motor capture bien */
         .lienzo { width: 400px; height: 500px; position: relative; overflow: hidden; background: #000; border: 1px solid #333; }
         
         .fondo-img { position: absolute; width: 100%; height: 100%; background-size: cover; background-position: center; z-index: 1; }
@@ -39,13 +41,12 @@
         .legal { position: absolute; bottom: 10px; width: 100%; text-align: center; font-size: 10px; color: #aaa; z-index: 10; text-shadow: 1px 1px 2px black; }
         
         .foto-jugador { position: absolute; z-index: 3; height: 75%; bottom: 0px; right: -50px; transform-origin: center center; }
-        .efecto-borde { filter: drop-shadow(0 0 var(--glow-size) rgba(var(--glow-color), var(--glow-opacity))); }
         
-        /* PARCHE FADE PARA DESCARGA */
-        .fade-overlay {
-            position: absolute; bottom: 0; left: 0; width: 100%; height: 30%;
-            background: linear-gradient(to top, #000 10%, transparent 100%);
-            z-index: 4; pointer-events: none;
+        /* EFECTOS REALES (Ahora sí funcionan con el nuevo motor) */
+        .efecto-borde { filter: drop-shadow(0 0 var(--glow-size) rgba(var(--glow-color), var(--glow-opacity))); }
+        .fade-inferior { 
+            -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%); 
+            mask-image: linear-gradient(to bottom, black 80%, transparent 100%); 
         }
 
         .bloque-header-11 { position: absolute; top:0; left:0; width:100%; height:100%; pointer-events: none; }
@@ -142,10 +143,7 @@
                         <img src="https://i.ibb.co/kgjTkMDX/Gemini-Generated-Image-ky6p34ky6p34ky6p-Photoroom.png" crossorigin="anonymous">
                     </div>
 
-                    <div id="contenedor-jugador" style="position:absolute; width:100%; height:100%; top:0; left:0; pointer-events:none;">
-                        <img src="" id="img-jugador" class="foto-jugador" crossorigin="anonymous">
-                        <div id="player-fade-overlay" class="fade-overlay" style="display:none;"></div>
-                    </div>
+                    <img src="" id="img-jugador" class="foto-jugador" crossorigin="anonymous">
 
                     <div id="mov-lista" class="lista-jugadores target-lista-jugadores"></div>
                     <div id="mov-dt" class="dt-info target-dt-info">
@@ -396,24 +394,18 @@
         const fileFondo = document.getElementById('file-fondo');
         const fileJugador = document.getElementById('file-jugador');
 
-        // SLIDERS
         const selMoveTarget = document.getElementById('sel-move-target');
         const moveX = document.getElementById('move-x');
         const moveY = document.getElementById('move-y');
         const moveScale = document.getElementById('move-scale');
 
-        // EFECTOS
         const chkBorde = document.getElementById('chk-borde');
         const chkFade = document.getElementById('chk-fade');
         const sliderGlowOpacity = document.getElementById('glow-opacity');
         const sliderGlowSize = document.getElementById('glow-size');
         const colorBorde = document.getElementById('col-borde');
         const panelGlow = document.getElementById('controles-glow');
-        
-        // --- 🔥 PARCHE 1: Referencia al nuevo overlay de fade ---
-        const playerFadeOverlay = document.getElementById('player-fade-overlay'); 
 
-        // FONDOS & TEXTOS
         const chkByn = document.getElementById('chk-byn');
         const rangeBlur = document.getElementById('range-blur');
         const rangeDim = document.getElementById('range-dim');
@@ -424,7 +416,6 @@
         const valorTamano = document.getElementById('valor-tamano');
         const rangoEspaciado = document.getElementById('rango-espaciado');
 
-        // ESCUDOS & UI
         const selEscudo1 = document.getElementById('sel-escudo-1');
         const selEscudo2 = document.getElementById('sel-escudo-2');
         const imgEscudo1 = document.getElementById('img-escudo-1');
@@ -433,7 +424,6 @@
         const p11 = document.getElementById('panel-11');
         const pNoticia = document.getElementById('panel-noticia');
 
-        // INPUTS
         const inHeader = document.getElementById('in-header');
         const inLista = document.getElementById('in-lista');
         const inDT = document.getElementById('in-dt');
@@ -442,7 +432,6 @@
         const inBajada = document.getElementById('in-bajada');
         const inLegal = document.getElementById('in-legal');
 
-        // VISUAL
         const txtHeader = document.getElementById('mov-info-match'); 
         const listaVis = document.getElementById('mov-lista'); 
         const dtNombreVal = document.getElementById('dt-nombre-val');
@@ -453,7 +442,6 @@
 
         let downloadBlob = null; 
 
-        // --- TABS ---
         function switchTab(tabId, btnElement) {
             document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -461,7 +449,6 @@
             btnElement.classList.add('active');
         }
 
-        // --- MOVIMIENTO ---
         const posiciones = {};
         function cargarPosicionElemento() {
             const id = selMoveTarget.value;
@@ -488,41 +475,19 @@
             }
         }
 
-        // --- FUNCIONES CORE ---
         function hexToRgb(hex) {
             var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
             return result ? parseInt(result[1], 16) + ", " + parseInt(result[2], 16) + ", " + parseInt(result[3], 16) : "242, 195, 23";
         }
         
-        // --- 🔥 PARCHE 2: EFECTOS RENDERIZABLES PARA HTML2CANVAS ---
-        // Usamos estilos inline para el borde y un div extra para el fade.
-        
-        function aplicarEstiloBorde() {
-            if (chkBorde.checked) {
-                const color = hexToRgb(colorBorde.value);
-                const opacity = sliderGlowOpacity.value;
-                const size = sliderGlowSize.value + 'px';
-                // APLICAMOS DIRECTO AL STYLE PARA QUE HTML2CANVAS LO VEA
-                imgJugador.style.filter = `drop-shadow(0 0 ${size} rgba(${color}, ${opacity}))`;
-                panelGlow.style.display = 'block';
-            } else {
-                imgJugador.style.filter = 'none';
-                panelGlow.style.display = 'none';
-            }
+        // --- 🔥 ARREGLO DE EFECTOS PARA EL NUEVO MOTOR ---
+        // Actualizamos variables CSS pero también estilos directos si hace falta
+        function ajustarColorGlow() { 
+            document.documentElement.style.setProperty('--glow-color', hexToRgb(colorBorde.value)); 
         }
-
-        function ajustarColorGlow() { aplicarEstiloBorde(); }
-        function ajustarGlow() { aplicarEstiloBorde(); }
-
-        function toggleEfectosJugador() {
-            aplicarEstiloBorde(); // Controla el borde
-            
-            // Controla el Fade (Overlay Div)
-            if (chkFade.checked) {
-                playerFadeOverlay.style.display = 'block';
-            } else {
-                playerFadeOverlay.style.display = 'none';
-            }
+        function ajustarGlow() {
+            document.documentElement.style.setProperty('--glow-opacity', sliderGlowOpacity.value);
+            document.documentElement.style.setProperty('--glow-size', sliderGlowSize.value + 'px');
         }
 
         function ajustarFiltrosFondo() {
@@ -535,13 +500,22 @@
             txtFrase.style.color = document.getElementById('col-frase').value;
             txtBajada.style.color = document.getElementById('col-bajada').value;
         }
+        function toggleEfectosJugador() {
+            if (chkBorde.checked) { 
+                imgJugador.classList.add('efecto-borde'); 
+                panelGlow.style.display = 'block'; 
+                ajustarGlow(); ajustarColorGlow();
+            } else { 
+                imgJugador.classList.remove('efecto-borde'); 
+                panelGlow.style.display = 'none'; 
+            }
+            if (chkFade.checked) imgJugador.classList.add('fade-inferior'); 
+            else imgJugador.classList.remove('fade-inferior');
+        }
 
-        // FIX ESCUDOS & MODO NOTICIA
         function cambiarModo() { 
             const modo = selModo.value;
-            // FIX CRÍTICO: CAMBIAR LA CLASE DEL BANNER
             banner.className = 'lienzo ' + modo; 
-
             if(modo === 'modo-11') {
                 p11.classList.remove('oculto'); pNoticia.classList.add('oculto');
             } else {
@@ -553,9 +527,13 @@
         function subirFondo() { const f = fileFondo.files[0]; if(f) { const r = new FileReader(); r.onload = e => document.querySelector('.fondo-img').style.backgroundImage = `url('${e.target.result}')`; r.readAsDataURL(f); } }
         function ejecutarAccionJugador() { if(selFoto.value) { if(document.querySelector('input[name="accion"]:checked').value !== 'lista') { imgJugador.src = selFoto.value; imgJugador.style.display = 'block'; } if(document.querySelector('input[name="accion"]:checked').value !== 'foto') { inLista.value += (inLista.value ? "\n" : "") + selFoto.options[selFoto.selectedIndex].text; actualizarLista(); } } }
         function subirJugador() { const f = fileJugador.files[0]; if(f) { const r = new FileReader(); r.onload = e => imgJugador.src = e.target.result; r.readAsDataURL(f); } }
+        
+        // --- 🔥 ARREGLO DE ESCUDOS ---
         function cambiarEscudos() { 
-            imgEscudo1.src = selEscudo1.value || ''; imgEscudo1.style.display = selEscudo1.value ? 'block' : 'none'; 
-            imgEscudo2.src = selEscudo2.value || ''; imgEscudo2.style.display = selEscudo2.value ? 'block' : 'none'; 
+            imgEscudo1.src = selEscudo1.value || ''; 
+            imgEscudo1.style.display = selEscudo1.value ? 'block' : 'none'; 
+            imgEscudo2.src = selEscudo2.value || ''; 
+            imgEscudo2.style.display = selEscudo2.value ? 'block' : 'none'; 
         }
         function ajustarTamanoEscudos() { 
             const val = sliderSizeEscudos.value + 'px';
@@ -582,23 +560,28 @@
             }
         }
 
-        // === PWA DOWNLOADER ===
+        // --- 🔥 NUEVO MOTOR DE DESCARGA (html-to-image) ---
         function generarImagen() {
-            html2canvas(document.querySelector('.lienzo'), { 
-                scale: 3, 
-                backgroundColor: null,
-                useCORS: true,
-                allowTaint: true
-            }).then(canvas => {
-                const img = document.getElementById('img-generada');
-                img.src = canvas.toDataURL("image/png");
-                
-                canvas.toBlob(function(blob) {
-                    downloadBlob = blob;
-                }, 'image/png');
-
-                document.getElementById('modal-descarga').style.display = 'flex';
-            });
+            var node = document.querySelector('.lienzo');
+            
+            // Usamos htmlToImage que SÍ soporta filtros y máscaras
+            htmlToImage.toPng(node)
+                .then(function (dataUrl) {
+                    const img = document.getElementById('img-generada');
+                    img.src = dataUrl;
+                    
+                    // Convertir Base64 a Blob para descarga
+                    fetch(dataUrl)
+                        .then(res => res.blob())
+                        .then(blob => {
+                            downloadBlob = blob;
+                            document.getElementById('modal-descarga').style.display = 'flex';
+                        });
+                })
+                .catch(function (error) {
+                    console.error('oops, something went wrong!', error);
+                    alert("Error al generar imagen. Prueba con otra foto o fondo.");
+                });
         }
 
         function descargarAhora() {
@@ -616,6 +599,11 @@
         }
 
         function cerrarModal() { document.getElementById('modal-descarga').style.display = 'none'; }
+        
+        // Cargar datos guardados si existen
+        function guardarDatos() { localStorage.setItem('bzn12_config', JSON.stringify({ modo: selModo.value, header: inHeader.value })); alert('Guardado'); }
+        function cargarDatos() { alert('Función simplificada para V106'); }
+        function cambiarFormato(t) { banner.className = 'lienzo ' + selModo.value + ' formato-' + t; }
     </script>
 </body>
 </html>
