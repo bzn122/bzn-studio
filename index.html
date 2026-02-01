@@ -10,12 +10,107 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="icon" type="image/png" href="https://i.ibb.co/kgjTkMDX/Gemini-Generated-Image-ky6p34ky6p34ky6p-Photoroom.png">
     
-    <title>BZN12 Studio V103</title>
+    <title>BZN12 Studio Final</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@600;800&family=Bebas+Neue&family=Chakra+Petch:wght@700&family=Do+Hyeon&family=Exo+2:wght@700&family=Fjalla+One&family=Kanit:wght@700&family=Oswald:wght@500;700&family=Passion+One:wght@700&family=Righteous&family=Roboto+Condensed:wght@300;400;700&family=Russo+One&family=Saira+Extra+Condensed:wght@700&family=Teko:wght@400;600&family=Titillium+Web:wght@700&family=Montserrat:wght@800&family=Playfair+Display:wght@700&family=Lobster&family=Orbitron:wght@700&family=Bangers&display=swap" rel="stylesheet">
     
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
-    <link rel="stylesheet" href="style.css">
+
+    <style>
+        :root { 
+            --azul: #001E38; --oro: #F2C317; --verde: #28a745; 
+            --glass: rgba(255, 255, 255, 0.08); --border: rgba(255, 255, 255, 0.15); 
+            --glow-opacity: 0.8; --glow-size: 5px; --glow-color: 242, 195, 23; 
+        }
+        html, body { margin: 0; padding: 0; font-family: 'Roboto Condensed', sans-serif; background: #001222; color: white; min-height: 100vh; padding-bottom: env(safe-area-inset-bottom); }
+        ::-webkit-scrollbar { display: none; }
+
+        .navbar { background: rgba(0, 30, 56, 0.95); backdrop-filter: blur(10px); padding: 15px; text-align: center; border-bottom: 2px solid var(--oro); position: sticky; top: 0; z-index: 1000; font-family: 'Anton'; font-size: 24px; letter-spacing: 1px; user-select: none; }
+        .main-wrapper { max-width: 600px; margin: 0 auto; padding-bottom: 80px; }
+        .preview-section { padding: 20px; display: flex; justify-content: center; background: radial-gradient(circle, #1a3b5c 0%, #000 100%); }
+        
+        #banner-container { transform-origin: top center; box-shadow: 0 20px 50px rgba(0,0,0,0.6); transition: 0.3s; position: relative; }
+        .lienzo { width: 400px; height: 500px; position: relative; overflow: hidden; background: #000; border: 1px solid #333; }
+        
+        .fondo-img { position: absolute; width: 100%; height: 100%; background-size: cover; background-position: center; z-index: 1; }
+        .fondo-sombra { position: absolute; width: 100%; height: 100%; background: radial-gradient(circle at top right, transparent 40%, rgba(0,0,0,0.9) 100%); z-index: 2; }
+        .overlay-dim { position: absolute; width: 100%; height: 100%; background: black; opacity: 0; z-index: 1; pointer-events: none; }
+
+        .legal { position: absolute; bottom: 10px; width: 100%; text-align: center; font-size: 10px; color: #aaa; z-index: 10; text-shadow: 1px 1px 2px black; }
+        
+        .foto-jugador { position: absolute; z-index: 3; height: 75%; bottom: 0px; right: -50px; transform-origin: center center; }
+        .efecto-borde { filter: drop-shadow(0 0 var(--glow-size) rgba(var(--glow-color), var(--glow-opacity))); }
+        
+        /* PARCHE FADE PARA DESCARGA */
+        .fade-overlay {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 30%;
+            background: linear-gradient(to top, #000 10%, transparent 100%);
+            z-index: 4; pointer-events: none;
+        }
+
+        .bloque-header-11 { position: absolute; top:0; left:0; width:100%; height:100%; pointer-events: none; }
+        .logo-bzn { position: absolute; top: 20px; left: 20px; width: 50px; height: 50px; border-radius: 50%; background: var(--azul); border: 2px solid var(--oro); display: flex; align-items: center; justify-content: center; z-index: 20; }
+        .logo-bzn img, .escudo-mini { width: 100%; height: 100%; object-fit: contain; }
+        .titulo-formacion { position: absolute; top: 20px; left: 95px; z-index: 10; font-family: 'Teko'; font-weight: 600; font-size: 72px; color: white; letter-spacing: -1px; line-height: 0.8; text-shadow: 2px 2px 4px rgba(0,0,0,0.9); }
+        .info-partido { position: absolute; top: 85px; left: 100px; z-index: 10; font-size: 16px; color: #ddd; font-family: 'Teko'; letter-spacing: 0.5px; text-shadow: 1px 1px 3px rgba(0,0,0,0.9); }
+        .escudos-container { position: absolute; top: 25px; right: 20px; display: flex; gap: 5px; z-index: 50; }
+        .escudo-mini { width: 45px; height: 45px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8)); }
+        
+        .lista-jugadores { position: absolute; z-index: 5; top: 120px; left: 20px; display: flex; flex-direction: column; text-shadow: 1px 1px 3px black; }
+        .fila-jugador { display: flex; align-items: center; line-height: 1.1; }
+        .dorsal { font-family: 'Oswald'; font-weight: 700; color: var(--oro); width: 35px; text-align: right; margin-right: 12px; font-size: 1.1em; }
+        .nombre-completo { text-transform: uppercase; letter-spacing: 0.5px; }
+        .nombre-pila { font-family: 'Roboto Condensed'; font-weight: 300; color: rgba(255,255,255,0.7); margin-right: 6px; font-size: 1em; }
+        .apellido { font-family: 'Roboto Condensed'; font-weight: 700; color: white; font-size: 1em; }
+        .dt-info { position: absolute; bottom: 60px; left: 20px; z-index: 5; font-family: 'Teko'; font-size: 24px; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 5px; width: 150px; text-shadow: 1px 1px 2px black; }
+        .dt-label { color: var(--oro); font-weight: 700; margin-right: 10px; }
+
+        .modo-noticia .bloque-header-11, .modo-noticia .lista-jugadores, .modo-noticia .dt-info { display: none; }
+        .modo-noticia .foto-jugador { height: 85%; bottom: -30px; left: 50%; transform: translateX(-50%); right: auto; }
+        .logo-noticia { position: absolute; top: 30px; left: 30px; width: 50px; height: 50px; border-radius: 50%; background: var(--azul); border: 2px solid var(--oro); display: flex; align-items: center; justify-content: center; z-index: 20; }
+        .logo-noticia img { width: 100%; height: 100%; object-fit: contain; }
+        .bloque-noticia { position: absolute; z-index: 10; width: 100%; text-align: center; padding: 0 20px; bottom: 80px; box-sizing: border-box; }
+        .modo-noticia h2 { font-family: 'Teko'; font-weight: 600; font-size: 42px; margin: 0; text-shadow: 2px 2px 4px black; }
+        .modo-noticia h1 { font-family: 'Teko'; font-weight: 600; font-size: 64px; color: var(--oro); line-height: 0.9; margin: 5px 0 10px 0; text-shadow: 3px 3px 6px black; }
+        .modo-noticia p { font-family: 'Teko'; font-weight: 400; font-size: 24px; color: #ddd; margin: 0; text-shadow: 1px 1px 3px black; }
+        
+        .modo-11 .logo-noticia, .modo-11 .bloque-noticia { display: none; }
+        .oculto { display: none !important; }
+
+        .controls-section { padding: 15px; }
+        .tabs-menu { display: flex; overflow-x: auto; gap: 8px; padding-bottom: 12px; margin-bottom: 5px; }
+        .tab-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: #888; padding: 10px 16px; border-radius: 8px; font-family: 'Oswald'; font-size: 14px; white-space: nowrap; transition: 0.2s; cursor: pointer; }
+        .tab-btn.active { background: var(--oro); color: var(--azul); border-color: var(--oro); font-weight: bold; transform: scale(1.05); }
+        .tab-panel { display: none; background: var(--glass); border: 1px solid var(--border); border-radius: 12px; padding: 20px; animation: fadeIn 0.3s ease; }
+        .tab-panel.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        .glass-card-inner { background: rgba(0,0,0,0.2); border-radius: 8px; padding: 15px; border: 1px solid var(--border); margin-top: 15px; }
+        label { color: var(--oro); font-weight: bold; font-size: 11px; display: block; margin-bottom: 6px; font-family: 'Oswald'; text-transform: uppercase; letter-spacing: 0.5px; }
+        input, select, textarea { width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid #444; color: white; border-radius: 8px; font-size: 16px; box-sizing: border-box; margin-bottom: 12px; outline: none; font-family: 'Roboto Condensed'; }
+        .pill-selector { display: flex; background: rgba(0,0,0,0.4); padding: 4px; border-radius: 8px; margin-bottom: 15px; }
+        .pill { flex: 1; text-align: center; cursor: pointer; margin: 0; }
+        .pill input { display: none; }
+        .pill span { display: block; padding: 8px; border-radius: 6px; font-size: 12px; color: #aaa; transition: 0.3s; }
+        .pill input:checked + span { background: var(--oro); color: #000; font-weight: bold; }
+        .upload-btn-wrapper { position: relative; overflow: hidden; margin-bottom: 10px; }
+        .btn-ghost { border: 1px dashed #666; color: #ccc; background: transparent; width: 100%; padding: 12px; border-radius: 8px; margin-top: 5px; cursor: pointer; }
+        .upload-btn-wrapper input[type=file] { font-size: 100px; position: absolute; left: 0; top: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer; }
+        .slider-box { background: rgba(0, 0, 0, 0.3); padding: 10px; border-radius: 8px; border: 1px solid #333; margin-top: 10px; }
+        .range-row { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; }
+        input[type=range] { width: 100%; margin: 0; accent-color: var(--oro); }
+        .btn-small { background: #333; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-size: 10px; cursor: pointer; width: 100%; margin-top: 5px; }
+        
+        .formato-story { width: 360px !important; height: 640px !important; }
+        .formato-square { width: 400px !important; height: 400px !important; }
+
+        .btn-descarga-flotante { position: fixed; bottom: 25px; right: 25px; width: 60px; height: 60px; border-radius: 50%; background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3); color: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.5); z-index: 9999; cursor: pointer; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 10000; display: none; justify-content: center; align-items: center; backdrop-filter: blur(8px); }
+        .modal-content { background: #1a1a1a; padding: 25px; border-radius: 16px; text-align: center; width: 90%; max-height: 90vh; border: 1px solid var(--oro); overflow-y: auto; }
+        .modal-content img { max-width: 100%; border-radius: 8px; display: block; margin: 0 auto; box-shadow: 0 0 20px rgba(0,0,0,0.5); pointer-events: auto !important; -webkit-user-drag: none; -webkit-touch-callout: default !important; user-select: none; }
+        .btn-download-success { background: var(--verde); color: white; border: none; padding: 15px; border-radius: 8px; font-size: 16px; font-family: 'Oswald'; width: 100%; margin-top: 15px; font-weight: bold; box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4); cursor: pointer; }
+        .btn-close-modal { background: #333; color: white; border: none; padding: 12px 20px; border-radius: 8px; margin-top: 10px; width: 100%; font-family: 'Oswald'; cursor: pointer; }
+    </style>
 </head>
 <body>
 
@@ -47,7 +142,7 @@
                         <img src="https://i.ibb.co/kgjTkMDX/Gemini-Generated-Image-ky6p34ky6p34ky6p-Photoroom.png" crossorigin="anonymous">
                     </div>
 
-                    <div id="contenedor-jugador" style="position: absolute; width: 100%; height: 100%; top:0; left:0; pointer-events: none;">
+                    <div id="contenedor-jugador" style="position:absolute; width:100%; height:100%; top:0; left:0; pointer-events:none;">
                         <img src="" id="img-jugador" class="foto-jugador" crossorigin="anonymous">
                         <div id="player-fade-overlay" class="fade-overlay" style="display:none;"></div>
                     </div>
@@ -84,6 +179,7 @@
             </div>
 
             <div class="panels-container">
+                
                 <div id="tab-posicion" class="tab-panel active">
                     <div style="display:flex; gap:10px; margin-bottom:10px;">
                         <div style="flex:1;">
@@ -257,41 +353,6 @@
                         <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Escudo_del_Club_Independiente_Rivadavia.svg/3840px-Escudo_del_Club_Independiente_Rivadavia.svg.png">Ind. Rivadavia</option>
                         <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Escudo_de_Gimnasia_de_Mendoza.png/612px-Escudo_de_Gimnasia_de_Mendoza.png">Gimnasia de Mendoza</option>
                     </select>
-                    
-                    <label>VISITANTE</label>
-                    <select id="sel-escudo-2" onchange="cambiarEscudos()" class="input-modern">
-                        <option value="">-- Sin Escudo --</option>
-                        <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Boca_Juniors_logo18.svg/500px-Boca_Juniors_logo18.svg.png">Boca Juniors</option>
-                        <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Escudo_del_Club_Atl%C3%A9tico_River_Plate.svg/1200px-Escudo_del_Club_Atl%C3%A9tico_River_Plate.svg.png">River Plate</option>
-                        <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Escudo_de_Racing_Club_%282014%29.svg/1920px-Escudo_de_Racing_Club_%282014%29.svg.png">Racing Club</option>
-                        <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Escudo_del_Club_Atl%C3%A9tico_Independiente.svg/960px-Escudo_del_Club_Atl%C3%A9tico_Independiente.svg.png">Independiente</option>
-                        <option value="https://upload.wikimedia.org/wikipedia/commons/6/62/Escudo_del_Club_Atl%C3%A9tico_San_Lorenzo_de_Almagro.png">San Lorenzo</option>
-                        <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Escudo_del_Club_Estudiantes_de_La_Plata.svg/1920px-Escudo_del_Club_Estudiantes_de_La_Plata.svg.png">Estudiantes LP</option>
-                        <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Escudo_de_Gimnasia_y_Esgrima_La_Plata.svg/1200px-Escudo_de_Gimnasia_y_Esgrima_La_Plata.svg.png">Gimnasia LP</option>
-                        <option value="https://upload.wikimedia.org/wikipedia/en/thumb/c/ce/Rosario_Central_logo.svg/1280px-Rosario_Central_logo.svg.png">Rosario Central</option>
-                        <option value="https://upload.wikimedia.org/wikipedia/commons/c/cd/Escudo_Newells.png">Newell's</option>
-                        <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Escudo_Talleres_2015.svg/3840px-Escudo_Talleres_2015.svg.png">Talleres</option>
-                        <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Escudo_Oficial_del_Club_Atl%C3%A9tico_Belgrano.png/707px-Escudo_Oficial_del_Club_Atl%C3%A9tico_Belgrano.png">Belgrano</option>
-                        <option value="https://upload.wikimedia.org/wikipedia/commons/3/36/Escudo_V%C3%A9lez_Sarsfield.png">Vélez</option>
-                        <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Emblema_oficial_del_Club_Atl%C3%A9tico_Hurac%C3%A1n.svg/1280px-Emblema_oficial_del_Club_Atl%C3%A9tico_Hurac%C3%A1n.svg.png">Huracán</option>
-                        <option value="https://upload.wikimedia.org/wikipedia/commons/2/24/Argentinos_jrs_badge.png">Argentinos Jrs</option>
-                        <option value="https://upload.wikimedia.org/wikipedia/commons/6/68/ESCUDO_DE_LAN%C3%9AS.png">Lanús</option>
-                        <option value="https://upload.wikimedia.org/wikipedia/commons/4/42/Escudo_de_Banfield.png">Banfield</option>
-                        <option value="https://upload.wikimedia.org/wikipedia/commons/1/15/Escudo_defensa_y_justicia.png">Defensa y Justicia</option>
-                        <option value="https://upload.wikimedia.org/wikipedia/commons/8/8a/Escudo_del_Club_Atl%C3%A9tico_Tigre.svg">Tigre</option>
-                        <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Escudo_platense.png/250px-Escudo_platense.png">Platense</option>
-                        <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Escudo_del_Club_Atletico_Tucuman.svg/1920px-Escudo_del_Club_Atletico_Tucuman.svg.png">Atlético Tucumán</option>
-                        <option value="https://upload.wikimedia.org/wikipedia/commons/d/d8/Union_de_Santa_Fe.png">Unión</option>
-                        <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Escudo_Asociacion_Atl%C3%A9tica_Estudiantes_de_R%C3%ADo_Cuarto.svg/1280px-Escudo_Asociacion_Atl%C3%A9tica_Estudiantes_de_R%C3%ADo_Cuarto.svg.png">Estudiantes RC</option>
-                        <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Bffgfgh.png/221px-Bffgfgh.png">Aldosivi</option>
-                        <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Escudo_Instituto_Atletico_Central_Cordoba.png/1280px-Escudo_Instituto_Atletico_Central_Cordoba.png">Instituto</option>
-                        <option value="https://upload.wikimedia.org/wikipedia/commons/3/3d/Barracas_Central.png">Barracas</option>
-                        <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Escudo_del_Club_Atl%C3%A9tico_Sarmiento_de_Jun%C3%ADn.svg/3840px-Escudo_del_Club_Atl%C3%A9tico_Sarmiento_de_Jun%C3%ADn.svg.png">Sarmiento</option>
-                        <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Escudo_del_Club_Central_C%C3%B3rdoba_de_Santiago_del_Estero._%281970s_created_logo%29.svg/3840px-Escudo_del_Club_Central_C%C3%B3rdoba_de_Santiago_del_Estero._%281970s_created_logo%29.svg.png">Central Córdoba</option>
-                        <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Escudo_del_Club_Deportivo_Riestra.svg/1920px-Escudo_del_Club_Deportivo_Riestra.svg.png">Riestra</option>
-                        <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Escudo_del_Club_Independiente_Rivadavia.svg/3840px-Escudo_del_Club_Independiente_Rivadavia.svg.png">Ind. Rivadavia</option>
-                        <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Escudo_de_Gimnasia_de_Mendoza.png/612px-Escudo_de_Gimnasia_de_Mendoza.png">Gimnasia de Mendoza</option>
-                    </select>
 
                     <div class="slider-box">
                         <label class="slider-label">Tamaño Escudos</label>
@@ -325,87 +386,6 @@
         </div>
     </div>
 
-    <style>
-        /* CSS V103 */
-        .glass-card-inner { background: rgba(0,0,0,0.2); border-radius: 8px; padding: 15px; border: 1px solid var(--border); margin-top: 15px; }
-        
-        /* PARCHE DE FADE (El div que simula el desvanecido) */
-        .fade-overlay {
-            position: absolute; bottom: 0; left: 0; width: 100%; height: 30%; /* Altura del fade */
-            background: linear-gradient(to top, #000 10%, transparent 100%);
-            z-index: 4; pointer-events: none;
-        }
-
-        /* UI BASICA */
-        label { color: var(--oro); font-weight: bold; font-size: 11px; display: block; margin-bottom: 6px; font-family: 'Oswald'; text-transform: uppercase; letter-spacing: 0.5px; }
-        input, select, textarea { width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid #444; color: white; border-radius: 8px; font-size: 16px; box-sizing: border-box; margin-bottom: 12px; outline: none; font-family: 'Roboto Condensed'; }
-        input:focus, select:focus, textarea:focus { border-color: var(--oro); }
-        .pill-selector { display: flex; background: rgba(0,0,0,0.4); padding: 4px; border-radius: 8px; margin-bottom: 15px; }
-        .pill { flex: 1; text-align: center; cursor: pointer; margin: 0; }
-        .pill input { display: none; }
-        .pill span { display: block; padding: 8px; border-radius: 6px; font-size: 12px; color: #aaa; transition: 0.3s; }
-        .pill input:checked + span { background: var(--oro); color: #000; font-weight: bold; }
-        
-        .upload-btn-wrapper { position: relative; overflow: hidden; margin-bottom: 10px; }
-        .btn-ghost { border: 1px dashed #666; color: #ccc; background: transparent; width: 100%; padding: 12px; border-radius: 8px; margin-top: 5px; cursor: pointer; }
-        .upload-btn-wrapper input[type=file] { font-size: 100px; position: absolute; left: 0; top: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer; }
-        
-        .slider-box { background: rgba(0, 0, 0, 0.3); padding: 10px; border-radius: 8px; border: 1px solid #333; margin-top: 10px; }
-        .range-row { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; }
-        input[type=range] { width: 100%; margin: 0; accent-color: var(--oro); }
-        .btn-small { background: #333; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-size: 10px; cursor: pointer; width: 100%; margin-top: 5px; }
-        .btn-download-success { background: var(--verde); color: white; border: none; padding: 15px; border-radius: 8px; font-size: 16px; font-family: 'Oswald'; width: 100%; margin-top: 15px; font-weight: bold; box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4); cursor: pointer; }
-
-        /* LIENZO */
-        .lienzo { width: 400px; height: 500px; position: relative; overflow: hidden; background: #000; border: 1px solid #333; }
-        .fondo-img { position: absolute; width: 100%; height: 100%; background-size: cover; background-position: center; z-index: 1; }
-        .fondo-sombra { position: absolute; width: 100%; height: 100%; background: radial-gradient(circle at top right, transparent 40%, rgba(0,0,0,0.9) 100%); z-index: 2; }
-        .overlay-dim { position: absolute; width: 100%; height: 100%; background: black; opacity: 0; z-index: 1; pointer-events: none; }
-        .legal { position: absolute; bottom: 10px; width: 100%; text-align: center; font-size: 10px; color: #aaa; z-index: 10; text-shadow: 1px 1px 2px black; }
-
-        .foto-jugador { position: absolute; z-index: 3; height: 75%; bottom: 0px; right: -50px; transform-origin: center center; }
-        .modo-noticia .foto-jugador { height: 85%; bottom: -30px; left: 50%; transform: translateX(-50%); right: auto; }
-        
-        .bloque-header-11 { position: absolute; top:0; left:0; width:100%; height:100%; pointer-events: none; }
-        .logo-bzn { position: absolute; top: 20px; left: 20px; width: 50px; height: 50px; border-radius: 50%; background: var(--azul); border: 2px solid var(--oro); display: flex; align-items: center; justify-content: center; z-index: 20; }
-        .logo-bzn img, .logo-noticia img, .escudo-mini { width: 100%; height: 100%; object-fit: contain; }
-        .titulo-formacion { position: absolute; top: 20px; left: 95px; z-index: 10; font-family: 'Teko'; font-weight: 600; font-size: 72px; color: white; letter-spacing: -1px; line-height: 0.8; text-shadow: 2px 2px 4px rgba(0,0,0,0.9); }
-        .info-partido { position: absolute; top: 85px; left: 100px; z-index: 10; font-size: 16px; color: #ddd; font-family: 'Teko'; letter-spacing: 0.5px; text-shadow: 1px 1px 3px rgba(0,0,0,0.9); }
-        
-        .escudos-container { position: absolute; top: 25px; right: 20px; display: flex; gap: 5px; z-index: 50; }
-        .escudo-mini { width: 45px; height: 45px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8)); }
-
-        .logo-noticia { position: absolute; top: 30px; left: 30px; width: 50px; height: 50px; border-radius: 50%; background: var(--azul); border: 2px solid var(--oro); display: flex; align-items: center; justify-content: center; z-index: 20; }
-        .lista-jugadores { position: absolute; z-index: 5; top: 120px; left: 20px; display: flex; flex-direction: column; text-shadow: 1px 1px 3px black; }
-        .fila-jugador { display: flex; align-items: center; line-height: 1.1; }
-        .dorsal { font-family: 'Oswald'; font-weight: 700; color: var(--oro); width: 35px; text-align: right; margin-right: 12px; font-size: 1.1em; }
-        .nombre-completo { text-transform: uppercase; letter-spacing: 0.5px; }
-        .nombre-pila { font-family: 'Roboto Condensed'; font-weight: 300; color: rgba(255,255,255,0.7); margin-right: 6px; font-size: 1em; }
-        .apellido { font-family: 'Roboto Condensed'; font-weight: 700; color: white; font-size: 1em; }
-
-        .dt-info { position: absolute; bottom: 60px; left: 20px; z-index: 5; font-family: 'Teko'; font-size: 24px; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 5px; width: 150px; text-shadow: 1px 1px 2px black; }
-        .dt-label { color: var(--oro); font-weight: 700; margin-right: 10px; }
-        .bloque-noticia { position: absolute; z-index: 10; width: 100%; text-align: center; padding: 0 20px; bottom: 80px; }
-        .modo-noticia h2 { font-family: 'Teko'; font-weight: 600; font-size: 42px; margin: 0; text-shadow: 2px 2px 4px black; }
-        .modo-noticia h1 { font-family: 'Teko'; font-weight: 600; font-size: 64px; color: var(--oro); line-height: 0.9; margin: 5px 0 10px 0; text-shadow: 3px 3px 6px black; }
-        .modo-noticia p { font-family: 'Teko'; font-weight: 400; font-size: 24px; color: #ddd; margin: 0; text-shadow: 1px 1px 3px black; }
-
-        .modo-11 .logo-noticia, .modo-11 .bloque-noticia { display: none; }
-        .modo-noticia .bloque-header-11, .modo-noticia .lista-jugadores, .modo-noticia .dt-info { display: none; }
-        .oculto { display: none !important; }
-        .formato-story { width: 360px !important; height: 640px !important; }
-        .formato-square { width: 400px !important; height: 400px !important; }
-
-        .btn-descarga-flotante { position: fixed; bottom: 25px; right: 25px; width: 60px; height: 60px; border-radius: 50%; background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3); color: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.5); z-index: 9999; cursor: pointer; }
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 10000; display: none; justify-content: center; align-items: center; backdrop-filter: blur(8px); }
-        .modal-content { background: #1a1a1a; padding: 25px; border-radius: 16px; text-align: center; width: 90%; max-height: 90vh; border: 1px solid var(--oro); overflow-y: auto; }
-        .modal-content img { max-width: 100%; border-radius: 8px; display: block; margin: 0 auto; box-shadow: 0 0 20px rgba(0,0,0,0.5); 
-            /* Fix para móviles */
-            pointer-events: auto !important; -webkit-user-drag: none; -webkit-touch-callout: default !important; user-select: none; -webkit-user-select: none;
-        }
-        .btn-close-modal { background: #333; color: white; border: none; padding: 12px 20px; border-radius: 8px; margin-top: 10px; width: 100%; font-family: 'Oswald'; cursor: pointer; }
-    </style>
-
     <script>
         // ELEMENTOS
         const banner = document.getElementById('banner');
@@ -429,7 +409,9 @@
         const sliderGlowSize = document.getElementById('glow-size');
         const colorBorde = document.getElementById('col-borde');
         const panelGlow = document.getElementById('controles-glow');
-        const playerFadeOverlay = document.getElementById('player-fade-overlay'); // NUEVO
+        
+        // --- 🔥 PARCHE 1: Referencia al nuevo overlay de fade ---
+        const playerFadeOverlay = document.getElementById('player-fade-overlay'); 
 
         // FONDOS & TEXTOS
         const chkByn = document.getElementById('chk-byn');
@@ -506,13 +488,15 @@
             }
         }
 
-        // --- EFECTOS REPARADOS (INLINE STYLES PARA HTML2CANVAS) ---
+        // --- FUNCIONES CORE ---
         function hexToRgb(hex) {
             var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
             return result ? parseInt(result[1], 16) + ", " + parseInt(result[2], 16) + ", " + parseInt(result[3], 16) : "242, 195, 23";
         }
         
-        // Función maestra para aplicar el borde directamente al estilo
+        // --- 🔥 PARCHE 2: EFECTOS RENDERIZABLES PARA HTML2CANVAS ---
+        // Usamos estilos inline para el borde y un div extra para el fade.
+        
         function aplicarEstiloBorde() {
             if (chkBorde.checked) {
                 const color = hexToRgb(colorBorde.value);
@@ -555,7 +539,7 @@
         // FIX ESCUDOS & MODO NOTICIA
         function cambiarModo() { 
             const modo = selModo.value;
-            // CAMBIAR CLASE DEL BANNER PARA QUE EL CSS ACTUE
+            // FIX CRÍTICO: CAMBIAR LA CLASE DEL BANNER
             banner.className = 'lienzo ' + modo; 
 
             if(modo === 'modo-11') {
