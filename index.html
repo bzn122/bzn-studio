@@ -10,11 +10,11 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="icon" type="image/png" href="https://i.ibb.co/kgjTkMDX/Gemini-Generated-Image-ky6p34ky6p34ky6p-Photoroom.png">
     
-    <title>BZN12 Studio V106</title>
+    <title>BZN12 Studio FINAL</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@600;800&family=Bebas+Neue&family=Chakra+Petch:wght@700&family=Do+Hyeon&family=Exo+2:wght@700&family=Fjalla+One&family=Kanit:wght@700&family=Oswald:wght@500;700&family=Passion+One:wght@700&family=Righteous&family=Roboto+Condensed:wght@300;400;700&family=Russo+One&family=Saira+Extra+Condensed:wght@700&family=Teko:wght@400;600&family=Titillium+Web:wght@700&family=Montserrat:wght@800&family=Playfair+Display:wght@700&family=Lobster&family=Orbitron:wght@700&family=Bangers&display=swap" rel="stylesheet">
     
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 
     <style>
         :root { 
@@ -29,26 +29,35 @@
         .main-wrapper { max-width: 600px; margin: 0 auto; padding-bottom: 80px; }
         .preview-section { padding: 20px; display: flex; justify-content: center; background: radial-gradient(circle, #1a3b5c 0%, #000 100%); }
         
+        /* BANNER */
         #banner-container { transform-origin: top center; box-shadow: 0 20px 50px rgba(0,0,0,0.6); transition: 0.3s; position: relative; }
-        
-        /* IMPORTANTE: El fondo debe ser transparente para que el motor capture bien */
         .lienzo { width: 400px; height: 500px; position: relative; overflow: hidden; background: #000; border: 1px solid #333; }
         
+        /* FONDOS */
         .fondo-img { position: absolute; width: 100%; height: 100%; background-size: cover; background-position: center; z-index: 1; }
         .fondo-sombra { position: absolute; width: 100%; height: 100%; background: radial-gradient(circle at top right, transparent 40%, rgba(0,0,0,0.9) 100%); z-index: 2; }
         .overlay-dim { position: absolute; width: 100%; height: 100%; background: black; opacity: 0; z-index: 1; pointer-events: none; }
 
+        /* ELEMENTOS COMUNES */
         .legal { position: absolute; bottom: 10px; width: 100%; text-align: center; font-size: 10px; color: #aaa; z-index: 10; text-shadow: 1px 1px 2px black; }
         
-        .foto-jugador { position: absolute; z-index: 3; height: 75%; bottom: 0px; right: -50px; transform-origin: center center; }
+        /* JUGADOR & EFECTOS */
+        #contenedor-jugador { position: absolute; z-index: 3; width: 100%; height: 100%; top:0; left:0; pointer-events: none; }
+        .foto-jugador { position: absolute; height: 75%; bottom: 0px; right: -50px; transform-origin: center center; }
         
-        /* EFECTOS REALES (Ahora sí funcionan con el nuevo motor) */
-        .efecto-borde { filter: drop-shadow(0 0 var(--glow-size) rgba(var(--glow-color), var(--glow-opacity))); }
-        .fade-inferior { 
-            -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%); 
-            mask-image: linear-gradient(to bottom, black 80%, transparent 100%); 
+        /* 🔥 SOLUCIÓN REAL: Capa física para el fade */
+        .parche-negro {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 25%; /* Altura del desvanecido */
+            background: linear-gradient(to top, #000000 20%, transparent 100%);
+            z-index: 4;
+            display: none; /* Se activa con JS */
         }
 
+        /* MODO 11 (HEADER) */
         .bloque-header-11 { position: absolute; top:0; left:0; width:100%; height:100%; pointer-events: none; }
         .logo-bzn { position: absolute; top: 20px; left: 20px; width: 50px; height: 50px; border-radius: 50%; background: var(--azul); border: 2px solid var(--oro); display: flex; align-items: center; justify-content: center; z-index: 20; }
         .logo-bzn img, .escudo-mini { width: 100%; height: 100%; object-fit: contain; }
@@ -66,6 +75,7 @@
         .dt-info { position: absolute; bottom: 60px; left: 20px; z-index: 5; font-family: 'Teko'; font-size: 24px; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 5px; width: 150px; text-shadow: 1px 1px 2px black; }
         .dt-label { color: var(--oro); font-weight: 700; margin-right: 10px; }
 
+        /* MODO NOTICIA */
         .modo-noticia .bloque-header-11, .modo-noticia .lista-jugadores, .modo-noticia .dt-info { display: none; }
         .modo-noticia .foto-jugador { height: 85%; bottom: -30px; left: 50%; transform: translateX(-50%); right: auto; }
         .logo-noticia { position: absolute; top: 30px; left: 30px; width: 50px; height: 50px; border-radius: 50%; background: var(--azul); border: 2px solid var(--oro); display: flex; align-items: center; justify-content: center; z-index: 20; }
@@ -78,6 +88,7 @@
         .modo-11 .logo-noticia, .modo-11 .bloque-noticia { display: none; }
         .oculto { display: none !important; }
 
+        /* CONTROLES */
         .controls-section { padding: 15px; }
         .tabs-menu { display: flex; overflow-x: auto; gap: 8px; padding-bottom: 12px; margin-bottom: 5px; }
         .tab-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: #888; padding: 10px 16px; border-radius: 8px; font-family: 'Oswald'; font-size: 14px; white-space: nowrap; transition: 0.2s; cursor: pointer; }
@@ -105,6 +116,7 @@
         .formato-story { width: 360px !important; height: 640px !important; }
         .formato-square { width: 400px !important; height: 400px !important; }
 
+        /* MODAL */
         .btn-descarga-flotante { position: fixed; bottom: 25px; right: 25px; width: 60px; height: 60px; border-radius: 50%; background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3); color: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.5); z-index: 9999; cursor: pointer; }
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 10000; display: none; justify-content: center; align-items: center; backdrop-filter: blur(8px); }
         .modal-content { background: #1a1a1a; padding: 25px; border-radius: 16px; text-align: center; width: 90%; max-height: 90vh; border: 1px solid var(--oro); overflow-y: auto; }
@@ -143,7 +155,10 @@
                         <img src="https://i.ibb.co/kgjTkMDX/Gemini-Generated-Image-ky6p34ky6p34ky6p-Photoroom.png" crossorigin="anonymous">
                     </div>
 
-                    <img src="" id="img-jugador" class="foto-jugador" crossorigin="anonymous">
+                    <div id="contenedor-jugador">
+                        <img src="" id="img-jugador" class="foto-jugador" crossorigin="anonymous">
+                        <div id="parche-fade" class="parche-negro"></div>
+                    </div>
 
                     <div id="mov-lista" class="lista-jugadores target-lista-jugadores"></div>
                     <div id="mov-dt" class="dt-info target-dt-info">
@@ -405,6 +420,9 @@
         const sliderGlowSize = document.getElementById('glow-size');
         const colorBorde = document.getElementById('col-borde');
         const panelGlow = document.getElementById('controles-glow');
+        
+        // --- PARCHE 1: REFERENCIA AL DIV FÍSICO DEL FADE ---
+        const parcheFade = document.getElementById('parche-fade');
 
         const chkByn = document.getElementById('chk-byn');
         const rangeBlur = document.getElementById('range-blur');
@@ -480,8 +498,7 @@
             return result ? parseInt(result[1], 16) + ", " + parseInt(result[2], 16) + ", " + parseInt(result[3], 16) : "242, 195, 23";
         }
         
-        // --- 🔥 ARREGLO DE EFECTOS PARA EL NUEVO MOTOR ---
-        // Actualizamos variables CSS pero también estilos directos si hace falta
+        // --- PARCHE 2: APLICAR ESTILOS FÍSICOS AL JS ---
         function ajustarColorGlow() { 
             document.documentElement.style.setProperty('--glow-color', hexToRgb(colorBorde.value)); 
         }
@@ -504,18 +521,26 @@
             if (chkBorde.checked) { 
                 imgJugador.classList.add('efecto-borde'); 
                 panelGlow.style.display = 'block'; 
-                ajustarGlow(); ajustarColorGlow();
+                ajustarGlow(); ajustarColorGlow(); 
             } else { 
                 imgJugador.classList.remove('efecto-borde'); 
                 panelGlow.style.display = 'none'; 
             }
-            if (chkFade.checked) imgJugador.classList.add('fade-inferior'); 
-            else imgJugador.classList.remove('fade-inferior');
+            
+            // --- AQUÍ ESTÁ EL TRUCO: ACTIVAR EL PARCHE FÍSICO ---
+            if (chkFade.checked) {
+                // imgJugador.classList.add('fade-inferior'); // YA NO USAMOS ESTO (falla en descarga)
+                parcheFade.style.display = 'block'; // USAMOS ESTO (div fisico)
+            } else {
+                // imgJugador.classList.remove('fade-inferior');
+                parcheFade.style.display = 'none';
+            }
         }
 
         function cambiarModo() { 
             const modo = selModo.value;
             banner.className = 'lienzo ' + modo; 
+
             if(modo === 'modo-11') {
                 p11.classList.remove('oculto'); pNoticia.classList.add('oculto');
             } else {
@@ -527,13 +552,9 @@
         function subirFondo() { const f = fileFondo.files[0]; if(f) { const r = new FileReader(); r.onload = e => document.querySelector('.fondo-img').style.backgroundImage = `url('${e.target.result}')`; r.readAsDataURL(f); } }
         function ejecutarAccionJugador() { if(selFoto.value) { if(document.querySelector('input[name="accion"]:checked').value !== 'lista') { imgJugador.src = selFoto.value; imgJugador.style.display = 'block'; } if(document.querySelector('input[name="accion"]:checked').value !== 'foto') { inLista.value += (inLista.value ? "\n" : "") + selFoto.options[selFoto.selectedIndex].text; actualizarLista(); } } }
         function subirJugador() { const f = fileJugador.files[0]; if(f) { const r = new FileReader(); r.onload = e => imgJugador.src = e.target.result; r.readAsDataURL(f); } }
-        
-        // --- 🔥 ARREGLO DE ESCUDOS ---
         function cambiarEscudos() { 
-            imgEscudo1.src = selEscudo1.value || ''; 
-            imgEscudo1.style.display = selEscudo1.value ? 'block' : 'none'; 
-            imgEscudo2.src = selEscudo2.value || ''; 
-            imgEscudo2.style.display = selEscudo2.value ? 'block' : 'none'; 
+            imgEscudo1.src = selEscudo1.value || ''; imgEscudo1.style.display = selEscudo1.value ? 'block' : 'none'; 
+            imgEscudo2.src = selEscudo2.value || ''; imgEscudo2.style.display = selEscudo2.value ? 'block' : 'none'; 
         }
         function ajustarTamanoEscudos() { 
             const val = sliderSizeEscudos.value + 'px';
@@ -560,28 +581,27 @@
             }
         }
 
-        // --- 🔥 NUEVO MOTOR DE DESCARGA (html-to-image) ---
+        // === PWA DOWNLOADER (CONFIGURADO PARA CAPTURAR EFECTOS) ===
         function generarImagen() {
-            var node = document.querySelector('.lienzo');
+            // Aseguramos que los efectos esten aplicados antes de la foto
+            toggleEfectosJugador();
             
-            // Usamos htmlToImage que SÍ soporta filtros y máscaras
-            htmlToImage.toPng(node)
-                .then(function (dataUrl) {
-                    const img = document.getElementById('img-generada');
-                    img.src = dataUrl;
-                    
-                    // Convertir Base64 a Blob para descarga
-                    fetch(dataUrl)
-                        .then(res => res.blob())
-                        .then(blob => {
-                            downloadBlob = blob;
-                            document.getElementById('modal-descarga').style.display = 'flex';
-                        });
-                })
-                .catch(function (error) {
-                    console.error('oops, something went wrong!', error);
-                    alert("Error al generar imagen. Prueba con otra foto o fondo.");
-                });
+            html2canvas(document.querySelector('.lienzo'), { 
+                scale: 4, // MÁXIMA CALIDAD
+                backgroundColor: null,
+                useCORS: true,
+                allowTaint: true, // IMPORTANTE PARA EFECTOS
+                logging: false
+            }).then(canvas => {
+                const img = document.getElementById('img-generada');
+                img.src = canvas.toDataURL("image/png");
+                
+                canvas.toBlob(function(blob) {
+                    downloadBlob = blob;
+                }, 'image/png');
+
+                document.getElementById('modal-descarga').style.display = 'flex';
+            });
         }
 
         function descargarAhora() {
@@ -600,9 +620,8 @@
 
         function cerrarModal() { document.getElementById('modal-descarga').style.display = 'none'; }
         
-        // Cargar datos guardados si existen
-        function guardarDatos() { localStorage.setItem('bzn12_config', JSON.stringify({ modo: selModo.value, header: inHeader.value })); alert('Guardado'); }
-        function cargarDatos() { alert('Función simplificada para V106'); }
+        function guardarDatos() { alert("Función de guardado (vacia por ahora)"); }
+        function cargarDatos() { alert("Función de carga (vacia por ahora)"); }
         function cambiarFormato(t) { banner.className = 'lienzo ' + selModo.value + ' formato-' + t; }
     </script>
 </body>
