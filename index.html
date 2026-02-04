@@ -47,12 +47,12 @@
             transform-origin: bottom center; pointer-events: none;
         }
 
-        /* 1. CAPA GLOW FÍSICA (Atrás) - Controlada por variables CSS */
+        /* 1. CAPA GLOW FÍSICA (Atrás) */
         .player-glow {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; z-index: 1;
-            /* Filtro dorado fijo + Blur dinámico */
+            /* Se establece por defecto, pero JS forzará inline para la exportación */
             filter: sepia(100%) hue-rotate(5deg) saturate(1000%) brightness(1.2) blur(var(--glow-blur)); 
-            opacity: var(--glow-opacity); /* Opacidad dinámica */
+            opacity: var(--glow-opacity);
             transform: scale(1.05); /* Un poco más grande para que sobresalga */
             transition: opacity 0.2s, filter 0.2s;
             display: none; /* Se activa con JS */
@@ -510,11 +510,19 @@
             txtBajada.style.color = document.getElementById('col-bajada').value;
         }
         
-        // --- LÓGICA FÍSICA PARA EFECTOS (Con Sliders Restaurados) ---
-        // Función para actualizar las variables CSS de la capa física
+        // --- LÓGICA FÍSICA PARA EFECTOS ---
         function ajustarGlowFisico() {
+            // 1. Actualizamos variables CSS (para consistencia en UI)
             document.documentElement.style.setProperty('--glow-opacity', sliderGlowOpacity.value);
             document.documentElement.style.setProperty('--glow-blur', sliderGlowBlur.value + 'px');
+            
+            // 2. FUERZA BRUTA: Aplicamos el filtro inline
+            // Esto asegura que la librería html-to-image capture los valores exactos
+            // sin depender de la cascada de variables CSS.
+            const blurVal = sliderGlowBlur.value + 'px';
+            const opacityVal = sliderGlowOpacity.value;
+            imgGlow.style.filter = `sepia(100%) hue-rotate(5deg) saturate(1000%) brightness(1.2) blur(${blurVal})`;
+            imgGlow.style.opacity = opacityVal;
         }
 
         function toggleEfectosJugador() {
@@ -522,7 +530,6 @@
             if (chkBorde.checked) { 
                 imgGlow.style.display = 'block';
                 panelGlow.style.display = 'block';
-                // Aseguramos que se apliquen los valores iniciales de los sliders
                 ajustarGlowFisico();
             } else { 
                 imgGlow.style.display = 'none';
@@ -547,13 +554,11 @@
         function cambiarFondo() { document.querySelector('.fondo-img').style.backgroundImage = selFondo.value ? `url('${selFondo.value}')` : ''; }
         function subirFondo() { const f = fileFondo.files[0]; if(f) { const r = new FileReader(); r.onload = e => document.querySelector('.fondo-img').style.backgroundImage = `url('${e.target.result}')`; r.readAsDataURL(f); } }
         
-        // ACTUALIZAR AMBAS IMAGENES AL CAMBIAR JUGADOR
         function ejecutarAccionJugador() { 
             if(selFoto.value) { 
                 if(document.querySelector('input[name="accion"]:checked').value !== 'lista') { 
                     imgMain.src = selFoto.value; 
                     imgGlow.src = selFoto.value; 
-                    // Activamos el wrapper y aplicamos el estado actual de los checkboxes
                     document.getElementById('player-wrapper').style.pointerEvents = 'auto';
                     toggleEfectosJugador();
                 } 
@@ -605,32 +610,41 @@
             }
         }
 
-        // === PWA DOWNLOADER (MOTOR NUEVO) ===
+        // === PWA DOWNLOADER MEJORADO ===
         function generarImagen() {
             // Aseguramos que se actualicen las capas físicas
             toggleEfectosJugador();
             
-            // Usamos html-to-image para exportar efectos complejos
-            htmlToImage.toPng(document.querySelector('.lienzo'), { 
-                cacheBust: true, 
-                pixelRatio: 2, 
-                backgroundColor: null 
-            })
-            .then(function (dataUrl) {
-                const img = document.getElementById('img-generada');
-                img.src = dataUrl;
-                
-                fetch(dataUrl)
-                    .then(res => res.blob())
-                    .then(blob => {
-                        downloadBlob = blob;
-                        document.getElementById('modal-descarga').style.display = 'flex';
-                    });
-            })
-            .catch(function (error) {
-                console.error('Error detallado:', error);
-                alert('Hubo un error al generar la imagen. Por favor revisa la consola para más detalles o intenta con otra imagen.');
-            });
+            // Forzamos actualización de estilos inline si el borde está activo
+            if(chkBorde.checked) {
+                ajustarGlowFisico();
+            }
+            
+            // Pequeña espera para que el navegador renderice el gradiente negro y el blur
+            // antes de tomar la captura. Esto soluciona que salgan invisibles.
+            setTimeout(() => {
+                htmlToImage.toPng(document.querySelector('.lienzo'), { 
+                    cacheBust: true, 
+                    pixelRatio: 2, 
+                    backgroundColor: null,
+                    useCORS: true // Habilitar CORS para filtros en imágenes externas
+                })
+                .then(function (dataUrl) {
+                    const img = document.getElementById('img-generada');
+                    img.src = dataUrl;
+                    
+                    fetch(dataUrl)
+                        .then(res => res.blob())
+                        .then(blob => {
+                            downloadBlob = blob;
+                            document.getElementById('modal-descarga').style.display = 'flex';
+                        });
+                })
+                .catch(function (error) {
+                    console.error('Error detallado:', error);
+                    alert('Hubo un error al generar la imagen. Intenta desactivar y activar el brillo nuevamente.');
+                });
+            }, 100); // 100ms de buffer
         }
 
         function descargarAhora() {
@@ -649,7 +663,6 @@
 
         function cerrarModal() { document.getElementById('modal-descarga').style.display = 'none'; }
         
-        // Placeholder simple para guardar/cargar
         function guardarDatos() { alert("Guardado en local"); }
         function cargarDatos() { alert("Cargado"); }
         function cambiarFormato(t) { banner.className = 'lienzo ' + selModo.value + ' formato-' + t; }
