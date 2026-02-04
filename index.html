@@ -4,13 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#001E38">
-    
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="icon" type="image/png" href="https://i.ibb.co/kgjTkMDX/Gemini-Generated-Image-ky6p34ky6p34ky6p-Photoroom.png">
-    
-    <title>BZN12 Studio V109 FINAL</title>
+    <title>BZN12 Studio OPTIMIZED</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@600;800&family=Bebas+Neue&family=Chakra+Petch:wght@700&family=Do+Hyeon&family=Exo+2:wght@700&family=Fjalla+One&family=Kanit:wght@700&family=Oswald:wght@500;700&family=Passion+One:wght@700&family=Righteous&family=Roboto+Condensed:wght@300;400;700&family=Russo+One&family=Saira+Extra+Condensed:wght@700&family=Teko:wght@400;600&family=Titillium+Web:wght@700&family=Montserrat:wght@800&family=Playfair+Display:wght@700&family=Lobster&family=Orbitron:wght@700&family=Bangers&display=swap" rel="stylesheet">
     
@@ -19,9 +13,8 @@
     <style>
         :root { 
             --azul: #001E38; --oro: #F2C317; 
-            /* Variables dinámicas para el glow físico */
-            --glow-opacity: 0.8;
-            --glow-blur: 8px;
+            --glow-color: #F2C317;
+            --glow-blur: 0px;
         }
         html, body { margin: 0; padding: 0; font-family: 'Roboto Condensed', sans-serif; background: #001222; color: white; min-height: 100vh; padding-bottom: env(safe-area-inset-bottom); }
         ::-webkit-scrollbar { display: none; }
@@ -35,46 +28,33 @@
         /* LIENZO BASE */
         .lienzo { width: 400px; height: 500px; position: relative; overflow: hidden; background: #000; border: 1px solid #333; }
         
-        .fondo-img { position: absolute; width: 100%; height: 100%; background-size: cover; background-position: center; z-index: 1; }
-        .fondo-sombra { position: absolute; width: 100%; height: 100%; background: radial-gradient(circle at top right, transparent 40%, rgba(0,0,0,0.9) 100%); z-index: 2; }
+        .fondo-img { position: absolute; width: 100%; height: 100%; background-size: cover; background-position: center; z-index: 1; transition: filter 0.1s; }
+        .fondo-sombra { position: absolute; width: 100%; height: 100%; background: radial-gradient(circle at top right, transparent 40%, rgba(0,0,0,0.9) 100%); z-index: 2; pointer-events: none; }
         .overlay-dim { position: absolute; width: 100%; height: 100%; background: black; opacity: 0; z-index: 1; pointer-events: none; }
 
-        /* === SISTEMA DE CAPAS FÍSICAS === */
-        
-        /* Contenedor para mover al jugador y su brillo juntos */
+        /* JUGADOR Y EFECTOS */
         #player-wrapper {
-            position: absolute; bottom: 0; right: -50px; width: 300px; height: 75%; z-index: 3;
+            position: absolute; bottom: 0; right: -50px; width: 300px; height: 75%; z-index: 5;
             transform-origin: bottom center; pointer-events: none;
+            will-change: transform; /* OPTIMIZACIÓN GPU */
         }
 
-        /* 1. CAPA GLOW FÍSICA (Atrás) */
-        .player-glow {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; z-index: 1;
-            /* Se establece por defecto, pero JS forzará inline para la exportación */
-            filter: sepia(100%) hue-rotate(5deg) saturate(1000%) brightness(1.2) blur(var(--glow-blur)); 
-            opacity: var(--glow-opacity);
-            transform: scale(1.05); /* Un poco más grande para que sobresalga */
-            transition: opacity 0.2s, filter 0.2s;
-            display: none; /* Se activa con JS */
-        }
-
-        /* 2. CAPA PRINCIPAL FÍSICA (Adelante) */
         .player-main {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; z-index: 2;
+            /* El filtro se aplica dinámicamente vía JS para evitar lag */
+            transition: filter 0.1s ease-out; 
         }
 
-        /* 3. CAPA FADE FÍSICA (Div sólido en la base del lienzo) */
+        /* CAPA FADE FÍSICA - Z-INDEX CORREGIDO */
         .player-fade-layer {
-            position: absolute; bottom: 0; left: 0; width: 100%; height: 25%; z-index: 4;
-            background: linear-gradient(to top, #000000 15%, transparent 100%);
-            display: none; /* Se activa con JS */
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 30%; z-index: 6; /* Encima del jugador */
+            background: linear-gradient(to top, rgba(0,0,0,1) 10%, rgba(0,0,0,0) 100%);
+            display: none; 
             pointer-events: none;
         }
 
-        /* RESTO DEL DISEÑO */
-        .legal { position: absolute; bottom: 10px; width: 100%; text-align: center; font-size: 10px; color: #aaa; z-index: 20; text-shadow: 1px 1px 2px black; }
-        
-        .bloque-header-11 { position: absolute; top:0; left:0; width:100%; height:100%; pointer-events: none; }
+        /* TEXTOS Y UI */
+        .bloque-header-11 { position: absolute; top:0; left:0; width:100%; height:100%; pointer-events: none; z-index: 10; }
         .logo-bzn { position: absolute; top: 20px; left: 20px; width: 50px; height: 50px; border-radius: 50%; background: var(--azul); border: 2px solid var(--oro); display: flex; align-items: center; justify-content: center; z-index: 20; }
         .logo-bzn img, .escudo-mini, .logo-noticia img { width: 100%; height: 100%; object-fit: contain; }
         
@@ -90,9 +70,11 @@
         .nombre-pila { font-family: 'Roboto Condensed'; font-weight: 300; color: rgba(255,255,255,0.7); margin-right: 6px; font-size: 1em; }
         .apellido { font-family: 'Roboto Condensed'; font-weight: 700; color: white; font-size: 1em; }
         
-        .dt-info { position: absolute; bottom: 60px; left: 20px; z-index: 5; font-family: 'Teko'; font-size: 24px; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 5px; width: 150px; text-shadow: 1px 1px 2px black; }
+        .dt-info { position: absolute; bottom: 60px; left: 20px; z-index: 10; font-family: 'Teko'; font-size: 24px; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 5px; width: 150px; text-shadow: 1px 1px 2px black; }
         .dt-label { color: var(--oro); font-weight: 700; margin-right: 10px; }
+        .legal { position: absolute; bottom: 10px; width: 100%; text-align: center; font-size: 10px; color: #aaa; z-index: 20; text-shadow: 1px 1px 2px black; }
 
+        /* ESTILOS NOTICIA */
         .modo-noticia .bloque-header-11, .modo-noticia .lista-jugadores, .modo-noticia .dt-info { display: none; }
         .modo-noticia #player-wrapper { height: 85%; bottom: -30px; left: 50%; transform: translateX(-50%); right: auto; }
         
@@ -108,11 +90,11 @@
         /* UI CONTROLES */
         .controls-section { padding: 15px; }
         .tabs-menu { display: flex; overflow-x: auto; gap: 8px; padding-bottom: 12px; margin-bottom: 5px; }
-        .tab-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: #888; padding: 10px 16px; border-radius: 8px; font-family: 'Oswald'; font-size: 14px; white-space: nowrap; transition: 0.2s; cursor: pointer; }
+        .tab-btn { background: rgba(255,255,255,0.05); border: 1px solid #444; color: #888; padding: 10px 16px; border-radius: 8px; font-family: 'Oswald'; font-size: 14px; white-space: nowrap; transition: 0.2s; cursor: pointer; }
         .tab-btn.active { background: var(--oro); color: var(--azul); border-color: var(--oro); font-weight: bold; transform: scale(1.05); }
-        .tab-panel { display: none; background: var(--glass); border: 1px solid var(--border); border-radius: 12px; padding: 20px; animation: fadeIn 0.3s ease; }
+        .tab-panel { display: none; background: rgba(0,0,0,0.3); border: 1px solid #333; border-radius: 12px; padding: 20px; animation: fadeIn 0.3s ease; }
         .tab-panel.active { display: block; }
-        .glass-card-inner { background: rgba(0,0,0,0.2); border-radius: 8px; padding: 15px; border: 1px solid var(--border); margin-top: 15px; }
+        .glass-card-inner { background: rgba(0,0,0,0.2); border-radius: 8px; padding: 15px; border: 1px solid #444; margin-top: 15px; }
         label { color: var(--oro); font-weight: bold; font-size: 11px; display: block; margin-bottom: 6px; font-family: 'Oswald'; text-transform: uppercase; letter-spacing: 0.5px; }
         input, select, textarea { width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid #444; color: white; border-radius: 8px; font-size: 16px; box-sizing: border-box; margin-bottom: 12px; outline: none; font-family: 'Roboto Condensed'; }
         .pill-selector { display: flex; background: rgba(0,0,0,0.4); padding: 4px; border-radius: 8px; margin-bottom: 15px; }
@@ -135,7 +117,7 @@
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 10000; display: none; justify-content: center; align-items: center; backdrop-filter: blur(8px); }
         .modal-content { background: #1a1a1a; padding: 25px; border-radius: 16px; text-align: center; width: 90%; max-height: 90vh; border: 1px solid var(--oro); overflow-y: auto; }
         .modal-content img { max-width: 100%; border-radius: 8px; display: block; margin: 0 auto; box-shadow: 0 0 20px rgba(0,0,0,0.5); pointer-events: auto !important; -webkit-user-drag: none; -webkit-touch-callout: default !important; user-select: none; }
-        .btn-download-success { background: var(--verde); color: white; border: none; padding: 15px; border-radius: 8px; font-size: 16px; font-family: 'Oswald'; width: 100%; margin-top: 15px; font-weight: bold; box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4); cursor: pointer; }
+        .btn-download-success { background: #28a745; color: white; border: none; padding: 15px; border-radius: 8px; font-size: 16px; font-family: 'Oswald'; width: 100%; margin-top: 15px; font-weight: bold; box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4); cursor: pointer; }
         .btn-close-modal { background: #333; color: white; border: none; padding: 12px 20px; border-radius: 8px; margin-top: 10px; width: 100%; font-family: 'Oswald'; cursor: pointer; }
     </style>
 </head>
@@ -165,8 +147,12 @@
 
                     <div id="mov-logo-news" class="logo-noticia"><img src="https://i.ibb.co/kgjTkMDX/Gemini-Generated-Image-ky6p34ky6p34ky6p-Photoroom.png" crossorigin="anonymous"></div>
 
+                    <!-- WRAPPER OPTIMIZADO (Sin imagen duplicada) -->
                     <div id="player-wrapper">
-                        <img src="" id="img-glow" class="player-glow" crossorigin="anonymous"> <img src="" id="img-main" class="player-main" crossorigin="anonymous"> </div>
+                        <img src="" id="img-main" class="player-main" crossorigin="anonymous"> 
+                    </div>
+                    
+                    <!-- CAPA FADE SEPARADA -->
                     <div id="fade-layer" class="player-fade-layer"></div>
 
                     <div id="mov-lista" class="lista-jugadores target-lista-jugadores"></div>
@@ -200,19 +186,20 @@
             </div>
 
             <div class="panels-container">
+                <!-- Panel MOVER (Optimizado) -->
                 <div id="tab-posicion" class="tab-panel active">
                     <div style="display:flex; gap:10px; margin-bottom:10px;">
                         <div style="flex:1;">
                             <label style="text-align:center;">↔️ X</label>
-                            <input type="range" id="move-x" min="-400" max="400" value="0" oninput="aplicarTransformacion()">
+                            <input type="range" id="move-x" min="-400" max="400" value="0" oninput="requestUpdateTransform()">
                         </div>
                         <div style="flex:1;">
                             <label style="text-align:center;">↕️ Y</label>
-                            <input type="range" id="move-y" min="-400" max="400" value="0" oninput="aplicarTransformacion()">
+                            <input type="range" id="move-y" min="-400" max="400" value="0" oninput="requestUpdateTransform()">
                         </div>
                     </div>
                     <label>🔍 TAMAÑO</label>
-                    <div class="range-row"><input type="range" id="move-scale" min="0.2" max="3.0" step="0.05" value="1" oninput="aplicarTransformacion()"></div>
+                    <div class="range-row"><input type="range" id="move-scale" min="0.2" max="3.0" step="0.05" value="1" oninput="requestUpdateTransform()"></div>
                     <hr style="border:0; border-top:1px solid rgba(255,255,255,0.1); margin:15px 0;">
                     <label>SELECCIONAR ELEMENTO</label>
                     <select id="sel-move-target" onchange="cargarPosicionElemento()" class="input-modern" style="margin-bottom:5px;">
@@ -223,6 +210,7 @@
                     <button onclick="resetearElementoActual()" class="btn-small">↺ Resetear</button>
                 </div>
 
+                <!-- Panel JUGADOR (Con Color Picker) -->
                 <div id="tab-jugador" class="tab-panel">
                     <div class="pill-selector">
                         <label class="pill"><input type="radio" name="accion" value="foto"><span>Solo Foto</span></label>
@@ -243,22 +231,22 @@
                         <div style="margin-bottom:15px;">
                             <label style="display:flex; align-items:center; gap:10px; cursor:pointer; color:#F2C317;">
                                 <input type="checkbox" id="chk-borde" onchange="toggleEfectosJugador()" style="width:18px; height:18px; accent-color:#F2C317;"> 
-                                ACTIVAR BORDE DORADO (FÍSICO)
+                                BORDE ILUMINADO
                             </label>
                             <div id="controles-glow" style="display:none; background:rgba(0,0,0,0.3); padding:10px; border-radius:8px; margin-top:5px; border-left:3px solid #F2C317;">
-                                <div style="margin-bottom:5px;">
-                                    <label style="margin:0; font-size:10px;">INTENSIDAD (Opacidad)</label>
-                                    <input type="range" id="glow-opacity" min="0" max="1" step="0.1" value="0.8" oninput="ajustarGlowFisico()">
+                                <div style="display:flex; gap:10px; align-items:center; margin-bottom:10px;">
+                                    <label style="margin:0; flex:1;">🎨 COLOR:</label>
+                                    <input type="color" id="glow-color-picker" value="#F2C317" oninput="ajustarGlowFisico()" style="width:50px; height:30px; padding:0; border:none; border-radius:4px;">
                                 </div>
                                 <div>
-                                    <label style="margin:0; font-size:10px;">GROSOR (Desenfoque)</label>
-                                    <input type="range" id="glow-blur" min="0" max="20" step="1" value="8" oninput="ajustarGlowFisico()">
+                                    <label style="margin:0; font-size:10px;">GROSOR / DIFUSIÓN</label>
+                                    <input type="range" id="glow-blur" min="0" max="30" step="1" value="8" oninput="ajustarGlowFisico()">
                                 </div>
                             </div>
                         </div>
                         <label style="display:flex; align-items:center; gap:10px; cursor:pointer; color:#90caf9;">
                             <input type="checkbox" id="chk-fade" onchange="toggleEfectosJugador()" style="width:18px; height:18px; accent-color:#90caf9;" checked> 
-                            🌫️ DESVANECER PIES (FÍSICO)
+                            🌫️ DESVANECER PIES
                         </label>
                     </div>
                 </div>
@@ -307,7 +295,7 @@
                 <div id="tab-escudos" class="tab-panel">
                     <label>LOCAL</label>
                     <select id="sel-escudo-1" onchange="cambiarEscudos()" class="input-modern">
-                        <option value="">-- Sin Escudo --</option>
+                         <option value="">-- Sin Escudo --</option>
                         <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Boca_Juniors_logo18.svg/500px-Boca_Juniors_logo18.svg.png">Boca Juniors</option>
                         <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Escudo_del_Club_Atl%C3%A9tico_River_Plate.svg/1200px-Escudo_del_Club_Atl%C3%A9tico_River_Plate.svg.png">River Plate</option>
                         <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Escudo_de_Racing_Club_%282014%29.svg/1920px-Escudo_de_Racing_Club_%282014%29.svg.png">Racing Club</option>
@@ -343,7 +331,7 @@
                     <label>VISITANTE</label>
                     <select id="sel-escudo-2" onchange="cambiarEscudos()" class="input-modern">
                         <option value="">-- Sin Escudo --</option>
-                        <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Boca_Juniors_logo18.svg/500px-Boca_Juniors_logo18.svg.png">Boca Juniors</option>
+                         <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Boca_Juniors_logo18.svg/500px-Boca_Juniors_logo18.svg.png">Boca Juniors</option>
                         <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Escudo_del_Club_Atl%C3%A9tico_River_Plate.svg/1200px-Escudo_del_Club_Atl%C3%A9tico_River_Plate.svg.png">River Plate</option>
                         <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Escudo_de_Racing_Club_%282014%29.svg/1920px-Escudo_de_Racing_Club_%282014%29.svg.png">Racing Club</option>
                         <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Escudo_del_Club_Atl%C3%A9tico_Independiente.svg/960px-Escudo_del_Club_Atl%C3%A9tico_Independiente.svg.png">Independiente</option>
@@ -408,13 +396,12 @@
     </div>
 
     <script>
-        // ELEMENTOS
+        // ELEMENTOS UI
         const banner = document.getElementById('banner');
         const selModo = document.getElementById('sel-modo');
         const selFondo = document.getElementById('sel-fondo');
         const selFoto = document.getElementById('sel-foto');
         const imgMain = document.getElementById('img-main'); 
-        const imgGlow = document.getElementById('img-glow');
         const fadeLayer = document.getElementById('fade-layer');
         const fileFondo = document.getElementById('file-fondo');
         const fileJugador = document.getElementById('file-jugador');
@@ -426,8 +413,9 @@
 
         const chkBorde = document.getElementById('chk-borde');
         const chkFade = document.getElementById('chk-fade');
-        // SLIDERS RESTAURADOS PARA LA CAPA FÍSICA
-        const sliderGlowOpacity = document.getElementById('glow-opacity');
+        
+        // CONTROLES DE EFECTOS
+        const glowColorPicker = document.getElementById('glow-color-picker');
         const sliderGlowBlur = document.getElementById('glow-blur');
         const panelGlow = document.getElementById('controles-glow');
 
@@ -465,7 +453,9 @@
         const txtLegal = document.getElementById('mov-legal');
 
         let downloadBlob = null; 
+        let moveRafId = null;
 
+        // UI TABS
         function switchTab(tabId, btnElement) {
             document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -473,6 +463,7 @@
             btnElement.classList.add('active');
         }
 
+        // === LÓGICA DE MOVIMIENTO OPTIMIZADA ===
         const posiciones = {};
         function cargarPosicionElemento() {
             const id = selMoveTarget.value;
@@ -481,6 +472,13 @@
             moveY.value = posiciones[id].y;
             moveScale.value = posiciones[id].s;
         }
+        
+        // Uso de requestAnimationFrame para evitar lag al mover
+        function requestUpdateTransform() {
+            if (moveRafId) cancelAnimationFrame(moveRafId);
+            moveRafId = requestAnimationFrame(aplicarTransformacion);
+        }
+
         function aplicarTransformacion() {
             const id = selMoveTarget.value;
             const el = document.getElementById(id);
@@ -490,6 +488,7 @@
                 el.style.transform = `translate(${x}px, ${y}px) scale(${s})`;
             }
         }
+        
         function resetearElementoActual() {
             const id = selMoveTarget.value;
             if(document.getElementById(id)) {
@@ -499,48 +498,39 @@
             }
         }
 
+        // === FONDOS ===
         function ajustarFiltrosFondo() {
             const blur = rangeBlur.value + 'px'; const gray = chkByn.checked ? '100%' : '0%';
             document.querySelector('.fondo-img').style.filter = `blur(${blur}) grayscale(${gray})`;
             overlayDim.style.opacity = rangeDim.value;
         }
-        function cambiarColorNoticia() {
-            txtTitulo.style.color = document.getElementById('col-titulo').value;
-            txtFrase.style.color = document.getElementById('col-frase').value;
-            txtBajada.style.color = document.getElementById('col-bajada').value;
-        }
-        
-        // --- LÓGICA FÍSICA PARA EFECTOS ---
+
+        // === EFECTOS JUGADOR (OPTIMIZADO CON DROP-SHADOW) ===
         function ajustarGlowFisico() {
-            // 1. Actualizamos variables CSS (para consistencia en UI)
-            document.documentElement.style.setProperty('--glow-opacity', sliderGlowOpacity.value);
-            document.documentElement.style.setProperty('--glow-blur', sliderGlowBlur.value + 'px');
-            
-            // 2. FUERZA BRUTA: Aplicamos el filtro inline
-            // Esto asegura que la librería html-to-image capture los valores exactos
-            // sin depender de la cascada de variables CSS.
-            const blurVal = sliderGlowBlur.value + 'px';
-            const opacityVal = sliderGlowOpacity.value;
-            imgGlow.style.filter = `sepia(100%) hue-rotate(5deg) saturate(1000%) brightness(1.2) blur(${blurVal})`;
-            imgGlow.style.opacity = opacityVal;
+            if(chkBorde.checked) {
+                const color = glowColorPicker.value;
+                const blur = sliderGlowBlur.value;
+                // drop-shadow es más rápido que duplicar imagen + blur
+                imgMain.style.filter = `drop-shadow(0 0 ${blur}px ${color})`;
+            } else {
+                imgMain.style.filter = 'none';
+            }
         }
 
         function toggleEfectosJugador() {
-            // Glow: Mostramos la imagen de atrás y el panel de control
             if (chkBorde.checked) { 
-                imgGlow.style.display = 'block';
                 panelGlow.style.display = 'block';
                 ajustarGlowFisico();
             } else { 
-                imgGlow.style.display = 'none';
                 panelGlow.style.display = 'none';
+                imgMain.style.filter = 'none';
             }
             
-            // Fade: Mostramos el div negro en la base
             if (chkFade.checked) { fadeLayer.style.display = 'block'; } 
             else { fadeLayer.style.display = 'none'; }
         }
 
+        // === CAMBIOS GENERALES ===
         function cambiarModo() { 
             const modo = selModo.value;
             banner.className = 'lienzo ' + modo; 
@@ -550,17 +540,21 @@
                 p11.classList.add('oculto'); pNoticia.classList.remove('oculto');
             }
         }
-
         function cambiarFondo() { document.querySelector('.fondo-img').style.backgroundImage = selFondo.value ? `url('${selFondo.value}')` : ''; }
         function subirFondo() { const f = fileFondo.files[0]; if(f) { const r = new FileReader(); r.onload = e => document.querySelector('.fondo-img').style.backgroundImage = `url('${e.target.result}')`; r.readAsDataURL(f); } }
-        
+        function cambiarColorNoticia() {
+            txtTitulo.style.color = document.getElementById('col-titulo').value;
+            txtFrase.style.color = document.getElementById('col-frase').value;
+            txtBajada.style.color = document.getElementById('col-bajada').value;
+        }
+
+        // === JUGADOR ===
         function ejecutarAccionJugador() { 
             if(selFoto.value) { 
                 if(document.querySelector('input[name="accion"]:checked').value !== 'lista') { 
                     imgMain.src = selFoto.value; 
-                    imgGlow.src = selFoto.value; 
                     document.getElementById('player-wrapper').style.pointerEvents = 'auto';
-                    toggleEfectosJugador();
+                    toggleEfectosJugador(); // Reaplica el drop-shadow si está activo
                 } 
                 if(document.querySelector('input[name="accion"]:checked').value !== 'foto') { 
                     inLista.value += (inLista.value ? "\n" : "") + selFoto.options[selFoto.selectedIndex].text; actualizarLista(); 
@@ -573,7 +567,6 @@
                 const r = new FileReader(); 
                 r.onload = e => { 
                     imgMain.src = e.target.result; 
-                    imgGlow.src = e.target.result;
                     document.getElementById('player-wrapper').style.pointerEvents = 'auto';
                     toggleEfectosJugador();
                 }; 
@@ -610,26 +603,29 @@
             }
         }
 
-        // === PWA DOWNLOADER MEJORADO ===
+        // === GENERAR IMAGEN (OPTIMIZADO) ===
         function generarImagen() {
-            // Aseguramos que se actualicen las capas físicas
+            // Aseguramos filtros actualizados
             toggleEfectosJugador();
             
-            // Forzamos actualización de estilos inline si el borde está activo
-            if(chkBorde.checked) {
-                ajustarGlowFisico();
-            }
-            
-            // Pequeña espera para que el navegador renderice el gradiente negro y el blur
-            // antes de tomar la captura. Esto soluciona que salgan invisibles.
+            // Hack para asegurar que el desvanecido salga: Quitamos pointer-events temporalmente
+            const fade = document.getElementById('fade-layer');
+            const prevPointerEvents = fade.style.pointerEvents;
+            fade.style.pointerEvents = 'auto'; // Hace que el renderer lo detecte mejor
+
             setTimeout(() => {
                 htmlToImage.toPng(document.querySelector('.lienzo'), { 
                     cacheBust: true, 
-                    pixelRatio: 2, 
+                    pixelRatio: 2, // Calidad alta
                     backgroundColor: null,
-                    useCORS: true // Habilitar CORS para filtros en imágenes externas
+                    useCORS: true,
+                    // Filtro manual para asegurar renderizado
+                    filter: (node) => (node.tagName !== 'LINK' && node.tagName !== 'SCRIPT')
                 })
                 .then(function (dataUrl) {
+                    // Restauramos estado
+                    fade.style.pointerEvents = prevPointerEvents;
+                    
                     const img = document.getElementById('img-generada');
                     img.src = dataUrl;
                     
@@ -641,10 +637,11 @@
                         });
                 })
                 .catch(function (error) {
-                    console.error('Error detallado:', error);
-                    alert('Hubo un error al generar la imagen. Intenta desactivar y activar el brillo nuevamente.');
+                    fade.style.pointerEvents = prevPointerEvents;
+                    console.error('Error:', error);
+                    alert('Error al generar. Si persiste, recarga la página.');
                 });
-            }, 100); // 100ms de buffer
+            }, 50);
         }
 
         function descargarAhora() {
@@ -657,12 +654,11 @@
                 link.click();
                 setTimeout(() => { document.body.removeChild(link); URL.revokeObjectURL(url); }, 100);
             } else {
-                alert("Procesando imagen... intenta de nuevo.");
+                alert("Procesando imagen...");
             }
         }
 
         function cerrarModal() { document.getElementById('modal-descarga').style.display = 'none'; }
-        
         function guardarDatos() { alert("Guardado en local"); }
         function cargarDatos() { alert("Cargado"); }
         function cambiarFormato(t) { banner.className = 'lienzo ' + selModo.value + ' formato-' + t; }
