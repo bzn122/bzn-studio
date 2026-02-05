@@ -11,7 +11,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="icon" type="image/png" href="https://i.ibb.co/kgjTkMDX/Gemini-Generated-Image-ky6p34ky6p34ky6p-Photoroom.png">
     
-    <title>BZN12 Studio V129</title>
+    <title>BZN12 Studio V130</title>
     
     <!-- Fuentes (Originales + 10 Nuevas) -->
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@600;800&family=Bebas+Neue&family=Chakra+Petch:wght@700&family=Do+Hyeon&family=Exo+2:wght@700&family=Fjalla+One&family=Kanit:wght@700&family=Oswald:wght@500;700&family=Passion+One:wght@700&family=Righteous&family=Roboto+Condensed:wght@300;400;700&family=Russo+One&family=Saira+Extra+Condensed:wght@700&family=Teko:wght@400;600&family=Titillium+Web:wght@700&family=Montserrat:wght@800&family=Playfair+Display:wght@700&family=Lobster&family=Orbitron:wght@700&family=Bangers&family=Archivo+Black&family=Paytone+One&family=Lilita+One&family=Bungee&family=Rowdies:wght@700&family=Luckiest+Guy&family=Permanent+Marker&family=Fredoka+One&family=Josefin+Sans:wght@700&family=Black+Ops+One&display=swap" rel="stylesheet">
@@ -75,7 +75,7 @@
 
         /* Estilos Noticia */
         .logo-noticia { position: absolute; top: 30px; left: 30px; width: 50px; height: 50px; border-radius: 50%; background: var(--azul); border: 2px solid var(--oro); display: flex; align-items: center; justify-content: center; z-index: 20; }
-        .bloque-noticia { position: absolute; z-index: 10; width: 100%; text-align: center; padding: 0 20px; bottom: 80px; box-sizing: border-box; }
+        .bloque-noticia { position: absolute; z-index: 10; width: 100%; text-align: center; padding: 0 20px; bottom: 80px; box-sizing: border-box; pointer-events: none; }
         .modo-noticia h2 { font-family: 'Teko'; font-weight: 600; font-size: 42px; margin: 0; text-shadow: 2px 2px 4px black; }
         .modo-noticia h1 { font-family: 'Teko'; font-weight: 600; font-size: 64px; color: var(--oro); line-height: 0.9; margin: 5px 0 10px 0; text-shadow: 3px 3px 6px black; }
         .modo-noticia p { font-family: 'Teko'; font-weight: 400; font-size: 24px; color: #ddd; margin: 0; text-shadow: 1px 1px 3px black; }
@@ -191,9 +191,17 @@
                     <label>ELEGIR CAPA</label>
                     <select id="sel-move-target" onchange="cargarPosicionElemento()" class="input-modern">
                         <option value="player-group">👤 Jugador + Brillo</option>
-                        <optgroup label="Diseño"><option value="mov-header-11">Header 11</option><option value="mov-titulo-11">📝 Título</option><option value="mov-info-match">🆚 Info Match</option><option value="mov-escudos">🛡️ Escudos</option></optgroup>
+                        <optgroup label="Diseño"><option value="mov-header-11">Header 11</option><option value="mov-titulo-11">📝 Título 11</option><option value="mov-info-match">🆚 Info Match</option><option value="mov-escudos">🛡️ Escudos</option></optgroup>
                         <optgroup label="Info"><option value="mov-lista">📋 Lista</option><option value="mov-dt">👔 DT</option><option value="mov-legal">👣 Footer</option></optgroup>
+                        <optgroup label="Noticia">
+                            <option value="mov-bloque-noticia">📰 Bloque Completo</option>
+                            <option value="txt-titulo-noticia">📝 Titular</option>
+                            <option value="txt-frase-noticia">💬 Frase</option>
+                            <option value="txt-bajada-noticia">📄 Bajada</option>
+                            <option value="mov-logo-news">🔵 Logo Noticia</option>
+                        </optgroup>
                     </select>
+                    <button onclick="resetearElementoActual()" class="btn-small">↺ Resetear Posición</button>
                 </div>
 
                 <!-- Panel Jugador (RESTAURADO TOTAL) -->
@@ -282,24 +290,41 @@
 
                 <!-- Panel Textos -->
                 <div id="tab-textos" class="tab-panel">
-                    <label>TIPOGRAFÍAS (+10 NUEVAS)</label>
-                    <select id="sel-fuente" onchange="aplicarEstilos()" class="input-modern">
-                        <option value="'Teko', sans-serif">Teko (Boca)</option>
-                        <option value="'Anton', sans-serif">Anton</option>
-                        <option value="'Bebas Neue', cursive">Bebas Neue</option>
-                        <option value="'Oswald', sans-serif">Oswald</option>
-                        <!-- NUEVAS 10 -->
-                        <option value="'Archivo Black', sans-serif">Archivo Black</option>
-                        <option value="'Lilita One', cursive">Lilita One</option>
-                        <option value="'Bungee', cursive">Bungee</option>
-                        <option value="'Rowdies', cursive">Rowdies</option>
-                        <option value="'Luckiest Guy', cursive">Luckiest Guy</option>
-                        <option value="'Fredoka One', cursive">Fredoka One</option>
-                        <option value="'Permanent Marker', cursive">Permanent Marker</option>
-                        <option value="'Paytone One', sans-serif">Paytone One</option>
-                        <option value="'Josefin Sans', sans-serif">Josefin Sans</option>
-                        <option value="'Black Ops One', cursive">Black Ops One</option>
-                    </select>
+                    <label>ESTILOS DE FUENTE</label>
+                    <div class="glass-card-inner" style="margin-top: 0; margin-bottom: 15px;">
+                        <label>ELEMENTO A EDITAR</label>
+                        <select id="sel-fuente-target" class="input-modern">
+                            <option value="target-titulo-11">Título 11</option>
+                            <option value="target-info-match">Info Match</option>
+                            <option value="target-lista-jugadores">Lista Jugadores</option>
+                            <option value="dt-info">DT Info</option>
+                            <option value="target-news-title">Titular Noticia</option>
+                            <option value="target-news-phrase">Frase Noticia</option>
+                            <option value="target-news-bajada">Bajada Noticia</option>
+                        </select>
+                        <label>COLOR DE TEXTO</label>
+                        <input type="color" id="text-color-picker" value="#ffffff" oninput="aplicarEstilos()" style="width:100%; height:40px; border:none; background:none; cursor:pointer; margin-bottom: 12px;">
+                        <label>TAMAÑO DE FUENTE</label>
+                        <input type="range" id="text-size-slider" min="10" max="150" value="72" oninput="aplicarEstilos()" style="width:100%; margin-bottom: 12px;">
+                        <label>TIPOGRAFÍAS (+10 NUEVAS)</label>
+                        <select id="sel-fuente" onchange="aplicarEstilos()" class="input-modern">
+                            <option value="'Teko', sans-serif">Teko (Boca)</option>
+                            <option value="'Anton', sans-serif">Anton</option>
+                            <option value="'Bebas Neue', cursive">Bebas Neue</option>
+                            <option value="'Oswald', sans-serif">Oswald</option>
+                            <!-- NUEVAS 10 -->
+                            <option value="'Archivo Black', sans-serif">Archivo Black</option>
+                            <option value="'Paytone One', sans-serif">Paytone One</option>
+                            <option value="'Lilita One', cursive">Lilita One</option>
+                            <option value="'Bungee', cursive">Bungee</option>
+                            <option value="'Rowdies', cursive">Rowdies</option>
+                            <option value="'Luckiest Guy', cursive">Luckiest Guy</option>
+                            <option value="'Fredoka One', cursive">Fredoka One</option>
+                            <option value="'Permanent Marker', cursive">Permanent Marker</option>
+                            <option value="'Josefin Sans', sans-serif">Josefin Sans</option>
+                            <option value="'Black Ops One', cursive">Black Ops One</option>
+                        </select>
+                    </div>
                     
                     <div id="panel-inputs-11">
                         <label>CABECERA</label><input type="text" id="in-header" placeholder="Boca Juniors | Rival" class="input-modern" onkeyup="actualizar()">
@@ -314,11 +339,11 @@
                     </div>
                 </div>
 
-                <!-- Panel Escudos (RESTAURADO COMPLETO) -->
+                <!-- Panel Escudos -->
                 <div id="tab-escudos" class="tab-panel">
                     <label>ESCUDO LOCAL</label>
                     <select id="sel-escudo-1" onchange="cambiarEscudos()" class="input-modern">
-                        <option value="">-- Sin Escudo --</option>
+                         <option value="">-- Sin Escudo --</option>
                         <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Boca_Juniors_logo18.svg/500px-Boca_Juniors_logo18.svg.png">Boca Juniors</option>
                         <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Escudo_del_Club_Atl%C3%A9tico_River_Plate.svg/1200px-Escudo_del_Club_Atl%C3%A9tico_River_Plate.svg.png">River Plate</option>
                         <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Escudo_de_Racing_Club_%282014%29.svg/1920px-Escudo_de_Racing_Club_%282014%29.svg.png">Racing Club</option>
@@ -347,14 +372,14 @@
                         <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Escudo_del_Club_Atl%C3%A9tico_Sarmiento_de_Jun%C3%ADn.svg/3840px-Escudo_del_Club_Atl%C3%A9tico_Sarmiento_de_Jun%C3%ADn.svg.png">Sarmiento</option>
                         <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Escudo_del_Club_Central_C%C3%B3rdoba_de_Santiago_del_Estero._%281970s_created_logo%29.svg/3840px-Escudo_del_Club_Central_C%C3%B3rdoba_de_Santiago_del_Estero._%281970s_created_logo%29.svg.png">Central Córdoba</option>
                         <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Escudo_del_Club_Deportivo_Riestra.svg/1920px-Escudo_del_Club_Deportivo_Riestra.svg.png">Riestra</option>
-                        <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Escudo_del_Club_Independiente_Rivadavia.svg/3840px-Escudo_del_Club_Independiente_Rivadavia.svg.png">Ind. Rivadavia</option>
+                        <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Escudo_del_Club_Independiente_Rivadavia.svg/3840px-Independiente_Rivadavia.svg.png">Ind. Rivadavia</option>
                         <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Escudo_de_Gimnasia_de_Mendoza.png/612px-Escudo_de_Gimnasia_de_Mendoza.png">Gimnasia de Mendoza</option>
                     </select>
                     
                     <label>VISITANTE</label>
                     <select id="sel-escudo-2" onchange="cambiarEscudos()" class="input-modern">
                         <option value="">-- Sin Escudo --</option>
-                        <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Boca_Juniors_logo18.svg/500px-Boca_Juniors_logo18.svg.png">Boca Juniors</option>
+                         <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Boca_Juniors_logo18.svg/500px-Boca_Juniors_logo18.svg.png">Boca Juniors</option>
                         <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Escudo_del_Club_Atl%C3%A9tico_River_Plate.svg/1200px-Escudo_del_Club_Atl%C3%A9tico_River_Plate.svg.png">River Plate</option>
                         <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Escudo_de_Racing_Club_%282014%29.svg/1920px-Escudo_de_Racing_Club_%282014%29.svg.png">Racing Club</option>
                         <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Escudo_del_Club_Atl%C3%A9tico_Independiente.svg/960px-Escudo_del_Club_Atl%C3%A9tico_Independiente.svg.png">Independiente</option>
@@ -382,7 +407,7 @@
                         <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Escudo_del_Club_Atl%C3%A9tico_Sarmiento_de_Jun%C3%ADn.svg/3840px-Escudo_del_Club_Atl%C3%A9tico_Sarmiento_de_Jun%C3%ADn.svg.png">Sarmiento</option>
                         <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Escudo_del_Club_Central_C%C3%B3rdoba_de_Santiago_del_Estero._%281970s_created_logo%29.svg/3840px-Escudo_del_Club_Central_C%C3%B3rdoba_de_Santiago_del_Estero._%281970s_created_logo%29.svg.png">Central Córdoba</option>
                         <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Escudo_del_Club_Deportivo_Riestra.svg/1920px-Escudo_del_Club_Deportivo_Riestra.svg.png">Riestra</option>
-                        <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Escudo_del_Club_Independiente_Rivadavia.svg/3840px-Escudo_del_Club_Independiente_Rivadavia.svg.png">Ind. Rivadavia</option>
+                        <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Escudo_del_Club_Independiente_Rivadavia.svg/3840px-Independiente_Rivadavia.svg.png">Ind. Rivadavia</option>
                         <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Escudo_de_Gimnasia_de_Mendoza.png/612px-Escudo_de_Gimnasia_de_Mendoza.png">Gimnasia de Mendoza</option>
                     </select>
                     <label>TAMAÑO</label><input type="range" id="size-escudos" min="20" max="100" value="45" oninput="ajustarTamanoEscudos()">
@@ -545,7 +570,7 @@
         }
 
         function actualizar() { 
-            document.getElementById('mov-info-match').innerText = document.getElementById('in-header').value || 'BZN12 | Rival'; 
+            document.getElementById('mov-info-match').innerText = document.getElementById('in-header').value || 'Boca Juniors | Rival'; 
             document.getElementById('dt-nombre-val').innerText = document.getElementById('in-dt').value || 'Mariano Herrón'; 
             
             // Noticia
@@ -556,14 +581,39 @@
 
         function aplicarEstilos() { 
             const font = document.getElementById('sel-fuente').value;
-            document.querySelectorAll('.target-titulo-11, .target-lista-jugadores, .dt-info, .info-partido, .target-news-title, .target-news-phrase, .target-news-bajada').forEach(el => el.style.fontFamily = font); 
+            const targetClass = document.getElementById('sel-fuente-target').value;
+            const color = document.getElementById('text-color-picker').value;
+            const size = document.getElementById('text-size-slider').value + 'px';
+
+            // Si el target es la lista, aplicamos a todos los hijos
+            if (targetClass === 'target-lista-jugadores') {
+                const els = document.querySelectorAll('.fila-jugador span');
+                els.forEach(el => {
+                    el.style.fontFamily = font;
+                    el.style.color = color;
+                    el.style.fontSize = size;
+                });
+            } else if (targetClass === 'dt-info') {
+                const els = document.querySelectorAll('.dt-info span');
+                els.forEach(el => {
+                    el.style.fontFamily = font;
+                    el.style.color = color;
+                    el.style.fontSize = size;
+                });
+            } else {
+                const els = document.querySelectorAll('.' + targetClass);
+                els.forEach(el => {
+                    el.style.fontFamily = font;
+                    el.style.color = color;
+                    el.style.fontSize = size;
+                });
+            }
         }
 
         function generarImagen() {
             loader.style.display = 'block';
             
-            // Fix Fuente en Exportación: Forzamos el renderizado de la fuente seleccionada
-            aplicarEstilos();
+            // Forzamos el renderizado de la fuente seleccionada
             const bannerNode = document.getElementById('banner');
             
             htmlToImage.toPng(bannerNode, {
@@ -604,7 +654,8 @@
         window.onload = () => {
             actualizarEfectos();
             cambiarEscudos();
-            aplicarEstilos();
+            // No aplicamos estilos al inicio para no sobreescribir los tamaños base del diseño
+            // pero si el usuario cambia algo, se aplicará.
         };
     </script>
 </body>
