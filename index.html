@@ -11,7 +11,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="icon" type="image/png" href="https://i.ibb.co/kgjTkMDX/Gemini-Generated-Image-ky6p34ky6p34ky6p-Photoroom.png">
     
-    <title>BZN12 Studio V127</title>
+    <title>BZN12 Studio V128</title>
     
     <!-- Fuentes (Originales + 10 Nuevas) -->
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@600;800&family=Bebas+Neue&family=Chakra+Petch:wght@700&family=Do+Hyeon&family=Exo+2:wght@700&family=Fjalla+One&family=Kanit:wght@700&family=Oswald:wght@500;700&family=Passion+One:wght@700&family=Righteous&family=Roboto+Condensed:wght@300;400;700&family=Russo+One&family=Saira+Extra+Condensed:wght@700&family=Teko:wght@400;600&family=Titillium+Web:wght@700&family=Montserrat:wght@800&family=Playfair+Display:wght@700&family=Lobster&family=Orbitron:wght@700&family=Bangers&family=Archivo+Black&family=Paytone+One&family=Lilita+One&family=Bungee&family=Rowdies:wght@700&family=Luckiest+Guy&family=Permanent+Marker&family=Fredoka+One&family=Josefin+Sans:wght@700&family=Black+Ops+One&display=swap" rel="stylesheet">
@@ -32,7 +32,7 @@
         ::-webkit-scrollbar { display: none; }
 
         /* Navbar */
-        .navbar { background: rgba(0, 30, 56, 0.95); backdrop-filter: blur(10px); padding: 15px; text-align: center; border-bottom: 2px solid var(--oro); position: sticky; top: 0; z-index: 1000; font-family: 'Anton'; font-size: 24px; letter-spacing: 1px; }
+        .navbar { background: rgba(0, 30, 56, 0.95); backdrop-filter: blur(10px); padding: 15px; text-align: center; border-bottom: 2px solid var(--oro); position: sticky; top: 0; z-index: 1000; font-family: 'Anton'; font-size: 24px; letter-spacing: 1px; user-select: none; }
         .main-wrapper { max-width: 600px; margin: 0 auto; padding-bottom: 40px; }
         
         .preview-section { padding: 20px; display: flex; flex-direction: column; align-items: center; background: radial-gradient(circle, #1a3b5c 0%, #000 100%); }
@@ -44,7 +44,7 @@
         .fondo-sombra { position: absolute; width: 100%; height: 100%; background: radial-gradient(circle at top right, transparent 30%, rgba(0, 0, 0, 0.9) 100%); z-index: 2; }
         .overlay-dim { position: absolute; width: 100%; height: 100%; background: black; opacity: 0; z-index: 1; pointer-events: none; }
 
-        /* JUGADOR - (SISTEMA QUE FUNCIONA, NO TOCAR) */
+        /* JUGADOR - (SISTEMA DE EFECTOS INTACTO) */
         #player-group {
             position: absolute; bottom: 0; right: -50px; width: 480px; height: 85%; z-index: 3;
             transform-origin: bottom center; pointer-events: none;
@@ -167,15 +167,16 @@
                     <label>🔍 TAMAÑO</label>
                     <input type="range" id="move-scale" min="0.2" max="3.0" step="0.05" value="1" oninput="aplicarTransformacion()">
                     <hr style="border:0; border-top:1px solid rgba(255,255,255,0.1); margin:15px 0;">
-                    <label>PILIEN TI CAPA</label>
+                    <label>ELEGIR CAPA</label>
                     <select id="sel-move-target" onchange="cargarPosicionElemento()" class="input-modern">
                         <option value="player-group">👤 Jugador + Brillo</option>
                         <optgroup label="Diseño"><option value="mov-header-11">Header 11</option><option value="mov-titulo-11">📝 Título</option><option value="mov-info-match">🆚 Info Match</option><option value="mov-escudos">🛡️ Escudos</option></optgroup>
                         <optgroup label="Info"><option value="mov-lista">📋 Lista</option><option value="mov-dt">👔 DT</option><option value="mov-legal">👣 Footer</option></optgroup>
                     </select>
+                    <button onclick="resetearElementoActual()" class="btn-small">↺ Resetear Posición</button>
                 </div>
 
-                <!-- Panel Jugador -->
+                <!-- Panel Jugador (RESTAURADO TOTAL) -->
                 <div id="tab-jugador" class="tab-panel">
                     <div class="pill-selector">
                         <label class="pill"><input type="radio" name="accion" value="foto"><span>Foto</span></label>
@@ -183,7 +184,7 @@
                         <label class="pill"><input type="radio" name="accion" value="ambos" checked><span>Ambos</span></label>
                     </div>
                     <select id="sel-foto" onchange="ejecutarAccionJugador()" class="input-modern">
-                        <option value="">-- Jugadores --</option>
+                        <option value="">-- Jugadores Restaurados --</option>
                         <optgroup label="Arqueros">
                             <option value="https://i.ibb.co/jZ5zjnGR/imagen-19.png">12. Leandro Brey</option>
                             <option value="https://i.ibb.co/HfncVTz7/o-7w-I1-RUl-U.png">1. Agustin Marchesin</option>
@@ -219,7 +220,7 @@
                     <div class="upload-btn-wrapper"><div class="btn-ghost">📂 Subir PNG Propio</div><input type="file" id="file-jugador" accept="image/*" onchange="subirJugador()"></div>
 
                     <div class="glass-card-inner">
-                        <label style="color:#F2C317;">EFECTOS DE PNG (NO TOCAR LÓGICA)</label>
+                        <label style="color:#F2C317;">EFECTOS (NO TOCAR LÓGICA)</label>
                         <label style="display:flex; align-items:center; gap:10px; cursor:pointer; color:#FFF; margin-bottom:10px;">
                             <input type="checkbox" id="chk-borde" onchange="toggleEfectosJugador()" style="width:18px; height:18px; accent-color:#F2C317;"> BRILLO DORADO
                         </label>
@@ -240,7 +241,7 @@
                     </div>
                 </div>
 
-                <!-- Panel Fondos -->
+                <!-- Panel Fondos (RESTAURADO) -->
                 <div id="tab-fondos" class="tab-panel">
                     <label>FONDO DEL BANNER</label>
                     <select id="sel-fondo" onchange="cambiarFondo()" class="input-modern">
@@ -248,6 +249,8 @@
                         <option value="https://i.ibb.co/qMdYY24y/Chat-GPT-Image-26-ene-2026-23-06-53.png">Azul Institucional</option>
                         <option value="https://i.ibb.co/PvRdxvJd/Chat-GPT-Image-27-ene-2026-06-22-54.png">Diseño Estrellas</option>
                         <option value="https://i.ibb.co/ynjHHs87/Generated-Image-January-27-2026-6-42-AM.png">Geométrico</option>
+                        <option value="https://i.ibb.co/Y425Q8CB/Generated-Image-January-27-2026-7-22-AM.png">Degradado Azul</option>
+                        <option value="https://i.ibb.co/LdCNPH5d/Generated-Image-January-27-2026-7-19-AM.png">Templo Bombonera</option>
                     </select>
                     <div class="upload-btn-wrapper"><div class="btn-ghost">📂 Subir Fondo Propio</div><input type="file" id="file-fondo" accept="image/*" onchange="subirFondo()"></div>
                 </div>
@@ -276,11 +279,11 @@
                     <label>LISTA JUGADORES</label><textarea id="in-lista" rows="4" placeholder="..." class="input-modern" onkeyup="actualizarLista()"></textarea>
                 </div>
 
-                <!-- Panel Escudos -->
+                <!-- Panel Escudos (RESTAURADO COMPLETO) -->
                 <div id="tab-escudos" class="tab-panel">
-                    <label>ESCUDO LOCAL</label>
+                    <label>LOKAL</label>
                     <select id="sel-escudo-1" onchange="cambiarEscudos()" class="input-modern">
-                         <option value="">-- Sin Escudo --</option>
+                        <option value="">-- Sin Escudo --</option>
                         <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Boca_Juniors_logo18.svg/500px-Boca_Juniors_logo18.svg.png">Boca Juniors</option>
                         <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Escudo_del_Club_Atl%C3%A9tico_River_Plate.svg/1200px-Escudo_del_Club_Atl%C3%A9tico_River_Plate.svg.png">River Plate</option>
                         <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Escudo_de_Racing_Club_%282014%29.svg/1920px-Escudo_de_Racing_Club_%282014%29.svg.png">Racing Club</option>
@@ -313,14 +316,14 @@
                         <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Escudo_de_Gimnasia_de_Mendoza.png/612px-Escudo_de_Gimnasia_de_Mendoza.png">Gimnasia de Mendoza</option>
                     </select>
                     
-                    <label>ESCUDO VISITANTE</label>
+                    <label>VISITANTE</label>
                     <select id="sel-escudo-2" onchange="cambiarEscudos()" class="input-modern">
                         <option value="">-- Sin Escudo --</option>
-                         <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Boca_Juniors_logo18.svg/500px-Boca_Juniors_logo18.svg.png">Boca Juniors</option>
+                        <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Boca_Juniors_logo18.svg/500px-Boca_Juniors_logo18.svg.png">Boca Juniors</option>
                         <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Escudo_del_Club_Atl%C3%A9tico_River_Plate.svg/1200px-Escudo_del_Club_Atl%C3%A9tico_River_Plate.svg.png">River Plate</option>
                         <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Escudo_de_Racing_Club_%282014%29.svg/1920px-Escudo_de_Racing_Club_%282014%29.svg.png">Racing Club</option>
                         <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Escudo_del_Club_Atl%C3%A9tico_Independiente.svg/960px-Escudo_del_Club_Atl%C3%A9tico_Independiente.svg.png">Independiente</option>
-                        <option value="https://upload.wikimedia.org/wikipedia/commons/6/62/Escudo_del_Club_Atl%C3%A_tico_San_Lorenzo_de_Almagro.png">San Lorenzo</option>
+                        <option value="https://upload.wikimedia.org/wikipedia/commons/6/62/Escudo_del_Club_Atl%C3%A9tico_San_Lorenzo_de_Almagro.png">San Lorenzo</option>
                         <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Escudo_del_Club_Estudiantes_de_La_Plata.svg/1920px-Escudo_del_Club_Estudiantes_de_La_Plata.svg.png">Estudiantes LP</option>
                         <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Escudo_de_Gimnasia_y_Esgrima_La_Plata.svg/1200px-Escudo_de_Gimnasia_y_Esgrima_La_Plata.svg.png">Gimnasia LP</option>
                         <option value="https://upload.wikimedia.org/wikipedia/en/thumb/c/ce/Rosario_Central_logo.svg/1280px-Rosario_Central_logo.svg.png">Rosario Central</option>
@@ -434,9 +437,6 @@
                 const colorHex = pickerColor.value;
                 document.documentElement.style.setProperty('--glow-blur', sliderBlur.value + 'px');
                 document.documentElement.style.setProperty('--glow-opacity', '0.7');
-                
-                // Aplicamos el tinte basado en la paleta de color
-                // Se usa una técnica de brillo sobre el clon físico
                 imgGlow.style.filter = `blur(${sliderBlur.value}px) brightness(1.5) drop-shadow(0 0 5px ${colorHex})`;
             }
             
@@ -518,27 +518,41 @@
 
         function generarImagen() {
             loader.style.display = 'block';
-            htmlToImage.toPng(document.getElementById('banner'), {
-                cacheBust: true, pixelRatio: 2, backgroundColor: null
+            
+            // Fix Fuente en Exportación: Forzamos la captura del estilo computado
+            const bannerNode = document.getElementById('banner');
+            
+            htmlToImage.toPng(bannerNode, {
+                cacheBust: true,
+                pixelRatio: 2,
+                backgroundColor: null,
+                fontEmbedCSS: true // Asegura que las Google Fonts se incluyan en la imagen
             })
             .then(dataUrl => {
                 const img = document.getElementById('img-generada');
                 img.src = dataUrl;
                 fetch(dataUrl).then(res => res.blob()).then(blob => {
-                    downloadBlob = blob; loader.style.display = 'none';
+                    downloadBlob = blob;
+                    loader.style.display = 'none';
                     document.getElementById('modal-descarga').style.display = 'flex';
                 });
             })
-            .catch(err => { loader.style.display = 'none'; alert("Error al generar."); });
+            .catch(err => {
+                loader.style.display = 'none';
+                console.error("Error al generar imagen:", err);
+            });
         }
 
         function descargarAhora() {
             if(!downloadBlob) return;
             const url = URL.createObjectURL(downloadBlob);
             const a = document.createElement('a');
-            a.href = url; a.download = `BZN12_${Date.now()}.png`;
-            document.body.appendChild(a); a.click();
-            document.body.removeChild(a); URL.revokeObjectURL(url);
+            a.href = url;
+            a.download = `BZN12_${Date.now()}.png`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
         }
 
         function cerrarModal() { document.getElementById('modal-descarga').style.display = 'none'; }
@@ -546,6 +560,7 @@
         window.onload = () => {
             actualizarEfectos();
             cambiarEscudos();
+            aplicarEstilos();
         };
     </script>
 </body>
