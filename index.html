@@ -1,188 +1,209 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="theme-color" content="#001E38">
-    <title>BZN12 Studio FINAL FIXED</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#001E38">
+<title>BZN12 Studio – Full Export Fix</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@600;800&family=Bebas+Neue&family=Chakra+Petch:wght@700&family=Do+Hyeon&family=Exo+2:wght@700&family=Fjalla+One&family=Kanit:wght@700&family=Oswald:wght@500;700&family=Passion+One:wght@700&family=Righteous&family=Roboto+Condensed:wght@300;400;700&family=Russo+One&family=Saira+Extra+Condensed:wght@700&family=Teko:wght@400;600&family=Titillium+Web:wght@700&family=Montserrat:wght@800&family=Playfair+Display:wght@700&family=Lobster&family=Orbitron:wght@700&family=Bangers&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Teko:wght@400;600&family=Roboto+Condensed:wght@300;400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js"></script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js"></script>
+<style>
+:root{--azul:#001E38;--oro:#F2C317}
+html,body{margin:0;padding:0;background:#001222;color:#fff;font-family:'Roboto Condensed',sans-serif}
+::-webkit-scrollbar{display:none}
 
-    <style>
-        :root { --azul:#001E38; --oro:#F2C317; }
-        html,body{margin:0;padding:0;font-family:'Roboto Condensed',sans-serif;background:#001222;color:#fff}
-        ::-webkit-scrollbar{display:none}
+.navbar{
+background:rgba(0,30,56,.95);
+padding:15px;
+text-align:center;
+border-bottom:2px solid var(--oro);
+font-family:'Anton';
+font-size:22px;
+position:sticky;top:0;z-index:1000
+}
 
-        .navbar{background:rgba(0,30,56,.95);backdrop-filter:blur(10px);padding:15px;text-align:center;border-bottom:2px solid var(--oro);position:sticky;top:0;z-index:1000;font-family:'Anton';font-size:24px}
-        .main-wrapper{max-width:600px;margin:auto;padding-bottom:80px}
-        .preview-section{padding:20px;display:flex;justify-content:center;background:radial-gradient(circle,#1a3b5c 0%,#000 100%)}
+.main-wrapper{max-width:600px;margin:auto;padding-bottom:100px}
 
-        #banner-container{box-shadow:0 20px 50px rgba(0,0,0,.6);position:relative}
+.preview-section{
+padding:20px;
+display:flex;
+justify-content:center;
+background:radial-gradient(circle,#1a3b5c 0%,#000 100%)
+}
 
-        .lienzo{width:400px;height:500px;position:relative;overflow:hidden;background:#000}
-        .fondo-img{position:absolute;width:100%;height:100%;background-size:cover;background-position:center;z-index:1}
-        .fondo-sombra{position:absolute;width:100%;height:100%;background:radial-gradient(circle at top right,transparent 40%,rgba(0,0,0,.9) 100%);z-index:2}
-        .overlay-dim{position:absolute;width:100%;height:100%;background:black;opacity:0;z-index:1}
+#banner-container{box-shadow:0 20px 50px rgba(0,0,0,.6)}
+.lienzo{
+width:400px;
+height:500px;
+position:relative;
+overflow:hidden;
+background:#000
+}
 
-        #player-wrapper{position:absolute;bottom:0;right:-50px;width:300px;height:75%;z-index:5;transform-origin:bottom center;pointer-events:none}
+.fondo-img{
+position:absolute;
+inset:0;
+background-size:cover;
+background-position:center;
+z-index:1
+}
 
-        .player-glow{position:absolute;inset:0;object-fit:contain;z-index:1;display:none}
-        .player-main{position:absolute;inset:0;object-fit:contain;z-index:2}
+.fondo-sombra{
+position:absolute;
+inset:0;
+background:radial-gradient(circle at top right,transparent 40%,rgba(0,0,0,.9) 100%);
+z-index:2
+}
 
-        .player-fade-layer{
-            position:absolute;
-            bottom:0;
-            left:0;
-            width:100%;
-            height:30%;
-            z-index:3;
-            display:none;
-            background:linear-gradient(to top,#000 10%,rgba(0,0,0,0) 100%);
-        }
+#player-wrapper{
+position:absolute;
+bottom:0;
+right:-50px;
+width:300px;
+height:80%;
+z-index:5;
+pointer-events:none
+}
 
-        .bloque-header-11{position:absolute;inset:0;z-index:10}
-        .logo-bzn,.logo-noticia{position:absolute;top:20px;left:20px;width:50px;height:50px;border-radius:50%;background:var(--azul);border:2px solid var(--oro);display:flex;align-items:center;justify-content:center}
-        .logo-bzn img,.logo-noticia img{width:100%;height:100%;object-fit:contain}
+.player-glow,
+.player-main{
+position:absolute;
+inset:0;
+object-fit:contain
+}
 
-        .titulo-formacion{position:absolute;top:20px;left:95px;font-family:'Teko';font-size:72px}
-        .info-partido{position:absolute;top:85px;left:100px;font-family:'Teko';font-size:16px}
+.player-glow{z-index:1;display:none}
+.player-main{z-index:2}
 
-        .escudos-container{position:absolute;top:25px;right:20px;display:flex;gap:5px}
-        .escudo-mini{width:45px;height:45px}
+.player-fade-layer{
+position:absolute;
+bottom:0;
+left:0;
+width:100%;
+height:30%;
+z-index:3;
+display:none;
+background:linear-gradient(to top,#000 10%,rgba(0,0,0,0) 100%)
+}
 
-        .lista-jugadores{position:absolute;top:120px;left:20px}
-        .dt-info{position:absolute;bottom:60px;left:20px;font-family:'Teko'}
-        .legal{position:absolute;bottom:10px;width:100%;text-align:center;font-size:10px}
+.bloque-header{
+position:absolute;
+top:0;left:0;right:0;
+padding:20px;
+z-index:10
+}
 
-        .modo-noticia .bloque-header-11,
-        .modo-noticia .lista-jugadores,
-        .modo-noticia .dt-info{display:none}
+.titulo-formacion{
+font-family:'Teko';
+font-size:72px;
+line-height:1
+}
 
-        .modo-noticia #player-wrapper{height:85%;bottom:-30px;left:50%;transform:translateX(-50%);right:auto}
-        .bloque-noticia{position:absolute;bottom:80px;width:100%;text-align:center}
+.info-partido{
+font-family:'Teko';
+font-size:16px
+}
 
-        .controls-section{padding:15px}
-        .btn-descarga-flotante{position:fixed;bottom:25px;right:25px;width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;z-index:9999}
+.legal{
+position:absolute;
+bottom:8px;
+width:100%;
+text-align:center;
+font-size:10px;
+opacity:.6
+}
 
-    </style>
+.controls-section{
+padding:20px
+}
+</style>
 </head>
-<body> <div class="navbar">BZN12 STUDIO</div>
 
-    <div class="main-wrapper">
-        <div class="preview-section">
-            <div id="banner-container">
-                <div class="lienzo" id="banner">
+<body>
 
-                    <div class="fondo-img" id="fondo"></div>
-                    <div class="fondo-sombra"></div>
-                    <div class="overlay-dim" id="overlayDim"></div>
+<div class="navbar">BZN12 STUDIO</div>
 
-                    <div id="player-wrapper">
-                        <img id="imgGlow" class="player-glow">
-                        <img id="imgJugador" class="player-main">
-                        <div id="fadeLayer" class="player-fade-layer"></div>
-                    </div>
+<div class="main-wrapper">
+<div class="preview-section">
+<div id="banner-container">
+<div class="lienzo" id="banner">
 
-                    <div class="bloque-header-11">
-                        <div class="logo-bzn"><img src="logo.png"></div>
-                        <div class="titulo-formacion">FORMACIÓN</div>
-                        <div class="info-partido">Liga Profesional</div>
-                        <div class="escudos-container">
-                            <img class="escudo-mini" src="escudo1.png">
-                            <img class="escudo-mini" src="escudo2.png">
-                        </div>
-                    </div>
+<div class="fondo-img" id="fondo"></div>
+<div class="fondo-sombra"></div>
 
-                    <div class="bloque-noticia">
-                        <h2 id="tituloNoticia">TÍTULO DE NOTICIA</h2>
-                    </div>
+<div id="player-wrapper">
+<img id="imgGlow" class="player-glow" src="jugador.png">
+<img id="imgJugador" class="player-main" src="jugador.png">
+<div id="fadeLayer" class="player-fade-layer"></div>
+</div>
 
-                    <div class="lista-jugadores"></div>
-                    <div class="dt-info">DT: Técnico</div>
-                    <div class="legal">© BZN12 Studio</div>
+<div class="bloque-header">
+<div class="titulo-formacion">FORMACIÓN</div>
+<div class="info-partido">Liga Profesional</div>
+</div>
 
-                </div>
-            </div>
-        </div>
+<div class="legal">© BZN12 Studio</div>
 
-        <div class="controls-section">
-            <label><input type="checkbox" id="chkBorde"> Borde Glow</label><br>
-            <label><input type="checkbox" id="chkFade"> Fade Pies</label><br><br>
+</div>
+</div>
+</div>
 
-            <input type="color" id="glowColor" value="#F2C317"><br>
-            <input type="range" id="glowBlur" min="5" max="60" value="25"><br>
-            <input type="range" id="glowOpacity" min="0.1" max="1" step="0.1" value="0.8"><br><br>
+<div class="controls-section">
+<label><input type="checkbox" id="chkBorde"> Glow</label><br>
+<label><input type="checkbox" id="chkFade"> Fade</label><br><br>
 
-            <button onclick="generarImagen()">Exportar PNG</button>
-        </div>
-    </div>
+<label>Color glow</label><br>
+<input type="color" id="glowColor" value="#F2C317"><br><br>
 
-    <script>
-        const imgJugador = document.getElementById('imgJugador');
-        const imgGlow = document.getElementById('imgGlow');
-        const fadeLayer = document.getElementById('fadeLayer');
+<label>Blur</label><br>
+<input type="range" id="glowBlur" min="5" max="60" value="25"><br><br>
 
-        const chkBorde = document.getElementById('chkBorde');
-        const chkFade = document.getElementById('chkFade');
+<label>Opacidad</label><br>
+<input type="range" id="glowOpacity" min="0.1" max="1" step="0.1" value="0.8"><br><br>
 
-        const glowColor = document.getElementById('glowColor');
-        const glowBlur = document.getElementById('glowBlur');
-        const glowOpacity = document.getElementById('glowOpacity');
+<button onclick="exportar()">Exportar PNG</button>
+</div>
+</div>
 
-        imgJugador.src = "jugador.png";
-        imgGlow.src = "jugador.png";
+<script>
+const imgGlow=document.getElementById('imgGlow');
+const fadeLayer=document.getElementById('fadeLayer');
+const chkBorde=document.getElementById('chkBorde');
+const chkFade=document.getElementById('chkFade');
+const glowColor=document.getElementById('glowColor');
+const glowBlur=document.getElementById('glowBlur');
+const glowOpacity=document.getElementById('glowOpacity');
 
-        function ajustarGlowFisico() {
-            if (!chkBorde.checked) return;
+function ajustarGlow(){
+if(!chkBorde.checked)return;
+imgGlow.style.display='block';
+imgGlow.style.filter=
+`drop-shadow(0 0 ${glowBlur.value}px ${glowColor.value})
+ drop-shadow(0 0 ${glowBlur.value*1.5}px ${glowColor.value})`;
+imgGlow.style.opacity=glowOpacity.value;
+}
 
-            imgGlow.style.display = 'block';
+chkBorde.onchange=()=>{imgGlow.style.display=chkBorde.checked?'block':'none';ajustarGlow()};
+chkFade.onchange=()=>fadeLayer.style.display=chkFade.checked?'block':'none';
+glowColor.oninput=ajustarGlow;
+glowBlur.oninput=ajustarGlow;
+glowOpacity.oninput=ajustarGlow;
 
-            const color = glowColor.value;
-            const blur = glowBlur.value;
-            const opacity = glowOpacity.value;
+function exportar(){
+if(chkFade.checked)fadeLayer.style.display='block';
+if(chkBorde.checked)ajustarGlow();
 
-            imgGlow.style.filter = `
-                drop-shadow(0 0 ${blur}px ${color})
-                drop-shadow(0 0 ${blur * 1.5}px ${color})
-            `;
-            imgGlow.style.opacity = opacity;
-        }
+htmlToImage.toPng(document.getElementById('banner'),{pixelRatio:2,cacheBust:true})
+.then(url=>{
+const a=document.createElement('a');
+a.download='banner.png';
+a.href=url;
+a.click();
+});
+}
+</script>
 
-        function toggleEfectosJugador() {
-            imgGlow.style.display = chkBorde.checked ? 'block' : 'none';
-            fadeLayer.style.display = chkFade.checked ? 'block' : 'none';
-            ajustarGlowFisico();
-        }
-
-        chkBorde.addEventListener('change', toggleEfectosJugador);
-        chkFade.addEventListener('change', toggleEfectosJugador);
-        glowColor.addEventListener('input', ajustarGlowFisico);
-        glowBlur.addEventListener('input', ajustarGlowFisico);
-        glowOpacity.addEventListener('input', ajustarGlowFisico);
-
-        function generarImagen() {
-            // Forzar visibilidad antes de exportar
-            if (chkFade.checked) {
-                fadeLayer.style.display = 'block';
-            }
-
-            if (chkBorde.checked) {
-                ajustarGlowFisico();
-            }
-
-            htmlToImage.toPng(document.getElementById('banner'), {
-                pixelRatio: 2,
-                cacheBust: true
-            }).then(dataUrl => {
-                const link = document.createElement('a');
-                link.download = 'banner.png';
-                link.href = dataUrl;
-                link.click();
-            });
-        }
-    </script>
 </body>
 </html>
-
