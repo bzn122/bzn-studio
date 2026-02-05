@@ -11,7 +11,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="icon" type="image/png" href="https://i.ibb.co/kgjTkMDX/Gemini-Generated-Image-ky6p34ky6p34ky6p-Photoroom.png">
     
-    <title>BZN12 Studio V128</title>
+    <title>BZN12 Studio V129</title>
     
     <!-- Fuentes (Originales + 10 Nuevas) -->
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@600;800&family=Bebas+Neue&family=Chakra+Petch:wght@700&family=Do+Hyeon&family=Exo+2:wght@700&family=Fjalla+One&family=Kanit:wght@700&family=Oswald:wght@500;700&family=Passion+One:wght@700&family=Righteous&family=Roboto+Condensed:wght@300;400;700&family=Russo+One&family=Saira+Extra+Condensed:wght@700&family=Teko:wght@400;600&family=Titillium+Web:wght@700&family=Montserrat:wght@800&family=Playfair+Display:wght@700&family=Lobster&family=Orbitron:wght@700&family=Bangers&family=Archivo+Black&family=Paytone+One&family=Lilita+One&family=Bungee&family=Rowdies:wght@700&family=Luckiest+Guy&family=Permanent+Marker&family=Fredoka+One&family=Josefin+Sans:wght@700&family=Black+Ops+One&display=swap" rel="stylesheet">
@@ -44,7 +44,7 @@
         .fondo-sombra { position: absolute; width: 100%; height: 100%; background: radial-gradient(circle at top right, transparent 30%, rgba(0, 0, 0, 0.9) 100%); z-index: 2; }
         .overlay-dim { position: absolute; width: 100%; height: 100%; background: black; opacity: 0; z-index: 1; pointer-events: none; }
 
-        /* JUGADOR - (SISTEMA DE EFECTOS INTACTO) */
+        /* JUGADOR - EFECTOS INTACTOS */
         #player-group {
             position: absolute; bottom: 0; right: -50px; width: 480px; height: 85%; z-index: 3;
             transform-origin: bottom center; pointer-events: none;
@@ -73,6 +73,16 @@
         .dt-info { position: absolute; bottom: 60px; left: 20px; z-index: 5; font-family: 'Teko'; font-size: 24px; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 5px; width: 150px; text-shadow: 1px 1px 2px black; }
         .legal { position: absolute; bottom: 10px; width: 100%; text-align: center; font-size: 10px; color: #aaa; z-index: 20; text-shadow: 1px 1px 2px black; }
 
+        /* Estilos Noticia */
+        .logo-noticia { position: absolute; top: 30px; left: 30px; width: 50px; height: 50px; border-radius: 50%; background: var(--azul); border: 2px solid var(--oro); display: flex; align-items: center; justify-content: center; z-index: 20; }
+        .bloque-noticia { position: absolute; z-index: 10; width: 100%; text-align: center; padding: 0 20px; bottom: 80px; box-sizing: border-box; }
+        .modo-noticia h2 { font-family: 'Teko'; font-weight: 600; font-size: 42px; margin: 0; text-shadow: 2px 2px 4px black; }
+        .modo-noticia h1 { font-family: 'Teko'; font-weight: 600; font-size: 64px; color: var(--oro); line-height: 0.9; margin: 5px 0 10px 0; text-shadow: 3px 3px 6px black; }
+        .modo-noticia p { font-family: 'Teko'; font-weight: 400; font-size: 24px; color: #ddd; margin: 0; text-shadow: 1px 1px 3px black; }
+        .modo-noticia .bloque-header-11, .modo-noticia .lista-jugadores, .modo-noticia .dt-info { display: none !important; }
+        .modo-noticia #player-group { height: 95%; bottom: -30px; left: 50%; transform: translateX(-50%); right: auto; }
+        .modo-11 .logo-noticia, .modo-11 .bloque-noticia { display: none !important; }
+
         /* Controles UI */
         .controls-section { padding: 15px; }
         .tabs-menu { display: flex; overflow-x: auto; gap: 8px; padding-bottom: 12px; margin-bottom: 10px; scrollbar-width: none; }
@@ -100,6 +110,7 @@
         .modal-content { background: #1a1a1a; padding: 20px; border-radius: 16px; text-align: center; width: 90%; max-height: 90vh; border: 1px solid var(--oro); overflow-y: auto; }
         .modal-content img { max-width: 100%; border-radius: 8px; margin-bottom: 15px; }
         .btn-download-success { background: #28a745; color: white; border: none; padding: 15px; border-radius: 8px; font-size: 16px; font-family: 'Oswald'; width: 100%; font-weight: bold; cursor: pointer; }
+        .oculto { display: none !important; }
     </style>
 </head>
 <body>
@@ -128,6 +139,9 @@
                         </div>
                     </div>
 
+                    <div id="mov-logo-news" class="logo-noticia"><img src="https://i.ibb.co/kgjTkMDX/Gemini-Generated-Image-ky6p34ky6p34ky6p-Photoroom.png" crossorigin="anonymous"></div>
+
+                    <!-- SISTEMA JUGADOR (NO TOCAR LÓGICA) -->
                     <div id="player-group">
                         <img src="" id="player-glow-img" class="glow-physical" crossorigin="anonymous">
                         <img src="" id="player-main-img" class="main-physical" crossorigin="anonymous">
@@ -136,6 +150,13 @@
                     <div id="mov-lista" class="lista-jugadores target-lista-jugadores"></div>
                     <div id="mov-dt" class="dt-info target-dt-info">
                         <span class="dt-label">DT:</span><span id="dt-nombre-val" class="dt-nombre">Mariano Herrón</span>
+                    </div>
+
+                    <!-- Bloque Noticia -->
+                    <div id="mov-bloque-noticia" class="bloque-noticia">
+                        <h2 id="txt-titulo-noticia" class="target-news-title">TITULAR</h2>
+                        <h1 id="txt-frase-noticia" class="target-news-phrase">FRASE AMARILLA</h1>
+                        <p id="txt-bajada-noticia" class="target-news-bajada">Bajada informativa...</p>
                     </div>
 
                     <div id="mov-legal" class="legal target-legal">BZN12 | Fuente: Prensa Boca</div>
@@ -173,7 +194,6 @@
                         <optgroup label="Diseño"><option value="mov-header-11">Header 11</option><option value="mov-titulo-11">📝 Título</option><option value="mov-info-match">🆚 Info Match</option><option value="mov-escudos">🛡️ Escudos</option></optgroup>
                         <optgroup label="Info"><option value="mov-lista">📋 Lista</option><option value="mov-dt">👔 DT</option><option value="mov-legal">👣 Footer</option></optgroup>
                     </select>
-                    <button onclick="resetearElementoActual()" class="btn-small">↺ Resetear Posición</button>
                 </div>
 
                 <!-- Panel Jugador (RESTAURADO TOTAL) -->
@@ -220,7 +240,7 @@
                     <div class="upload-btn-wrapper"><div class="btn-ghost">📂 Subir PNG Propio</div><input type="file" id="file-jugador" accept="image/*" onchange="subirJugador()"></div>
 
                     <div class="glass-card-inner">
-                        <label style="color:#F2C317;">EFECTOS (NO TOCAR LÓGICA)</label>
+                        <label style="color:#F2C317;">EFECTOS DE PNG (NO TOCAR LÓGICA)</label>
                         <label style="display:flex; align-items:center; gap:10px; cursor:pointer; color:#FFF; margin-bottom:10px;">
                             <input type="checkbox" id="chk-borde" onchange="toggleEfectosJugador()" style="width:18px; height:18px; accent-color:#F2C317;"> BRILLO DORADO
                         </label>
@@ -241,9 +261,14 @@
                     </div>
                 </div>
 
-                <!-- Panel Fondos (RESTAURADO) -->
+                <!-- Panel Fondos (CON OPCIÓN DE MODO RESTAURADA) -->
                 <div id="tab-fondos" class="tab-panel">
-                    <label>FONDO DEL BANNER</label>
+                    <label>MODO VISUAL</label>
+                    <select id="sel-modo" onchange="cambiarModo()" class="input-modern">
+                        <option value="modo-11">📋 11 INICIAL</option>
+                        <option value="modo-noticia">📰 NOTICIA</option>
+                    </select>
+                    <label>FONDO DEL BANNER (6 FONDOS)</label>
                     <select id="sel-fondo" onchange="cambiarFondo()" class="input-modern">
                         <option value="https://i.ibb.co/ZztT2CLn/Gemini-Generated-Image-r4y8efr4y8efr4y8.jpg">La Bombonera</option>
                         <option value="https://i.ibb.co/qMdYY24y/Chat-GPT-Image-26-ene-2026-23-06-53.png">Azul Institucional</option>
@@ -275,13 +300,23 @@
                         <option value="'Josefin Sans', sans-serif">Josefin Sans</option>
                         <option value="'Black Ops One', cursive">Black Ops One</option>
                     </select>
-                    <label>CABECERA</label><input type="text" id="in-header" placeholder="Boca Juniors | Rival" class="input-modern" onkeyup="actualizar()">
-                    <label>LISTA JUGADORES</label><textarea id="in-lista" rows="4" placeholder="..." class="input-modern" onkeyup="actualizarLista()"></textarea>
+                    
+                    <div id="panel-inputs-11">
+                        <label>CABECERA</label><input type="text" id="in-header" placeholder="Boca Juniors | Rival" class="input-modern" onkeyup="actualizar()">
+                        <label>LISTA JUGADORES</label><textarea id="in-lista" rows="3" placeholder="..." class="input-modern" onkeyup="actualizarLista()"></textarea>
+                        <label>DT</label><input type="text" id="in-dt" placeholder="Mariano Herrón" class="input-modern" onkeyup="actualizar()">
+                    </div>
+
+                    <div id="panel-inputs-noticia" style="display:none;">
+                        <label>TITULAR</label><input type="text" id="in-titular-news" placeholder="TITULAR" class="input-modern" onkeyup="actualizar()">
+                        <label>FRASE</label><textarea id="in-frase-news" rows="2" placeholder="FRASE" class="input-modern" onkeyup="actualizar()"></textarea>
+                        <label>BAJADA</label><input type="text" id="in-bajada-news" placeholder="Bajada informativa" class="input-modern" onkeyup="actualizar()">
+                    </div>
                 </div>
 
                 <!-- Panel Escudos (RESTAURADO COMPLETO) -->
                 <div id="tab-escudos" class="tab-panel">
-                    <label>LOKAL</label>
+                    <label>ESCUDO LOCAL</label>
                     <select id="sel-escudo-1" onchange="cambiarEscudos()" class="input-modern">
                         <option value="">-- Sin Escudo --</option>
                         <option value="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Boca_Juniors_logo18.svg/500px-Boca_Juniors_logo18.svg.png">Boca Juniors</option>
@@ -424,7 +459,7 @@
             if(el) { el.style.transform = 'none'; posiciones[id] = { x: 0, y: 0, s: 1 }; cargarPosicionElemento(); }
         }
 
-        // --- EFECTOS (Lógica de Silueta Fade Intacta) ---
+        // --- EFECTOS (Lógica Intacta) ---
         function hexToRgb(hex) {
             const r = parseInt(hex.slice(1, 3), 16);
             const g = parseInt(hex.slice(3, 5), 16);
@@ -439,7 +474,6 @@
                 document.documentElement.style.setProperty('--glow-opacity', '0.7');
                 imgGlow.style.filter = `blur(${sliderBlur.value}px) brightness(1.5) drop-shadow(0 0 5px ${colorHex})`;
             }
-            
             if (chkFade.checked) {
                 const start = sliderFadeStart.value;
                 const end = sliderFadeEnd.value;
@@ -478,7 +512,10 @@
         }
 
         function cambiarModo() { 
-            banner.className = 'lienzo ' + selModo.value; 
+            const modo = selModo.value;
+            banner.className = 'lienzo ' + modo;
+            document.getElementById('panel-inputs-11').style.display = modo === 'modo-11' ? 'block' : 'none';
+            document.getElementById('panel-inputs-noticia').style.display = modo === 'modo-noticia' ? 'block' : 'none';
             actualizarEfectos();
         }
 
@@ -509,24 +546,31 @@
 
         function actualizar() { 
             document.getElementById('mov-info-match').innerText = document.getElementById('in-header').value || 'BZN12 | Rival'; 
+            document.getElementById('dt-nombre-val').innerText = document.getElementById('in-dt').value || 'Mariano Herrón'; 
+            
+            // Noticia
+            document.getElementById('txt-titulo-noticia').innerText = document.getElementById('in-titular-news').value || 'TITULAR';
+            document.getElementById('txt-frase-noticia').innerText = document.getElementById('in-frase-news').value || 'FRASE AMARILLA';
+            document.getElementById('txt-bajada-noticia').innerText = document.getElementById('in-bajada-news').value || 'Bajada informativa...';
         }
 
         function aplicarEstilos() { 
             const font = document.getElementById('sel-fuente').value;
-            document.querySelectorAll('.target-titulo-11, .target-lista-jugadores, .dt-info, .info-partido').forEach(el => el.style.fontFamily = font); 
+            document.querySelectorAll('.target-titulo-11, .target-lista-jugadores, .dt-info, .info-partido, .target-news-title, .target-news-phrase, .target-news-bajada').forEach(el => el.style.fontFamily = font); 
         }
 
         function generarImagen() {
             loader.style.display = 'block';
             
-            // Fix Fuente en Exportación: Forzamos la captura del estilo computado
+            // Fix Fuente en Exportación: Forzamos el renderizado de la fuente seleccionada
+            aplicarEstilos();
             const bannerNode = document.getElementById('banner');
             
             htmlToImage.toPng(bannerNode, {
                 cacheBust: true,
                 pixelRatio: 2,
                 backgroundColor: null,
-                fontEmbedCSS: true // Asegura que las Google Fonts se incluyan en la imagen
+                fontEmbedCSS: true
             })
             .then(dataUrl => {
                 const img = document.getElementById('img-generada');
